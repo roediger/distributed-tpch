@@ -1,11 +1,11 @@
-DROP TABLE part;
-DROP TABLE supplier;
-DROP TABLE partsupp;
-DROP TABLE nation;
-DROP TABLE region;
-DROP TABLE q2_minimum_cost_supplier;
-DROP TABLE q2_minimum_cost_supplier_tmp1;
-DROP TABLE q2_minimum_cost_supplier_tmp2;
+DROP TABLE IF EXISTS part;
+DROP TABLE IF EXISTS supplier;
+DROP TABLE IF EXISTS partsupp;
+DROP TABLE IF EXISTS nation;
+DROP TABLE IF EXISTS region;
+DROP TABLE IF EXISTS q2_minimum_cost_supplier;
+DROP TABLE IF EXISTS q2_minimum_cost_supplier_tmp1;
+DROP TABLE IF EXISTS q2_minimum_cost_supplier_tmp2;
 
 -- create the tables and load the data
 create external table part (P_PARTKEY INT, P_NAME STRING, P_MFGR STRING, P_BRAND STRING, P_TYPE STRING, P_SIZE INT, P_CONTAINER STRING, P_RETAILPRICE DOUBLE, P_COMMENT STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' STORED AS TEXTFILE LOCATION '/tpch/part';

@@ -1,9 +1,9 @@
-DROP TABLE partsupp;
-DROP TABLE supplier;
-DROP TABLE nation;
-DROP TABLE q11_important_stock;
-DROP TABLE q11_part_tmp;
-DROP TABLE q11_sum_tmp;
+DROP TABLE IF EXISTS partsupp;
+DROP TABLE IF EXISTS supplier;
+DROP TABLE IF EXISTS nation;
+DROP TABLE IF EXISTS q11_important_stock;
+DROP TABLE IF EXISTS q11_part_tmp;
+DROP TABLE IF EXISTS q11_sum_tmp;
 
 -- create tables and load data
 create external table supplier (S_SUPPKEY INT, S_NAME STRING, S_ADDRESS STRING, S_NATIONKEY INT, S_PHONE STRING, S_ACCTBAL DOUBLE, S_COMMENT STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' STORED AS TEXTFILE LOCATION '/tpch/supplier';

@@ -1,9 +1,9 @@
-DROP TABLE partsupp;
-DROP TABLE part;
-DROP TABLE supplier;
-DROP TABLE q16_parts_supplier_relationship;
-DROP TABLE q16_tmp;
-DROP TABLE supplier_tmp;
+DROP TABLE IF EXISTS partsupp;
+DROP TABLE IF EXISTS part;
+DROP TABLE IF EXISTS supplier;
+DROP TABLE IF EXISTS q16_parts_supplier_relationship;
+DROP TABLE IF EXISTS q16_tmp;
+DROP TABLE IF EXISTS supplier_tmp;
 
 -- create the tables and load the data
 create external table part (P_PARTKEY INT, P_NAME STRING, P_MFGR STRING, P_BRAND STRING, P_TYPE STRING, P_SIZE INT, P_CONTAINER STRING, P_RETAILPRICE DOUBLE, P_COMMENT STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' STORED AS TEXTFILE LOCATION '/tpch/part';
