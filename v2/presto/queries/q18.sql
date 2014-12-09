@@ -6,15 +6,15 @@ select  top 100
 		o.totalprice,
 		sum(l.quantity)
 from
-		customer,
-		orders,
-		lineitem
+		tpch.sf1.customer,
+		tpch.sf1.orders,
+		tpch.sf1.lineitem
 where
 		o.orderkey in (
 				select
 						l.orderkey
 				from
-						lineitem
+						tpch.sf1.lineitem
 				group by
 						l.orderkey having
 								sum(l.quantity) > 300

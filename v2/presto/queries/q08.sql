@@ -11,14 +11,14 @@ from
 						l.extendedprice * (1 - l.discount) as volume,
 						n2.n.name as nation
 				from
-						part,
-						supplier,
-						lineitem,
-						orders,
-						customer,
-						nation n1,
-						nation n2,
-						region
+						tpch.sf1.part,
+						tpch.sf1.supplier,
+						tpch.sf1.lineitem,
+						tpch.sf1.orders,
+						tpch.sf1.customer,
+						tpch.sf1.nation n1,
+						tpch.sf1.nation n2,
+						tpch.sf1.region
 				where
 						p.partkey = l.partkey
 						and s.suppkey = l.suppkey

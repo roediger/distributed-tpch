@@ -2,7 +2,7 @@
 select
 		sum(l.extendedprice * l.discount) as revenue
 from
-		lineitem l
+		tpch.sf1.lineitem l
 where
 		date_parse(l.shipdate, '%Y-%m-%d') >= date '1994-01-01'
 		and date_parse(l.shipdate, '%Y-%m-%d') < date '1995-01-01'

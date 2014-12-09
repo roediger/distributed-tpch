@@ -10,7 +10,7 @@ select
 		avg(l.discount) as avg_disc,
 		count(*) as count_order
 from
-		lineitem l
+		tpch.sf1.lineitem l
 where
 		date_parse(l.shipdate, '%Y-%m-%d') <= date '1998-12-01' - interval '90' day
 group by

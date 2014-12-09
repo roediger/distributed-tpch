@@ -5,8 +5,8 @@ select
 				else 0
 		end) / sum(l.extendedprice * (1 - l.discount)) as promo_revenue
 from
-		lineitem,
-		part
+		tpch.sf1.lineitem,
+		tpch.sf1.part
 where
 		l.partkey = p.partkey
 		and l.shipdate >= date '1995-09-01'

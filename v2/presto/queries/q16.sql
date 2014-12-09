@@ -4,8 +4,8 @@ select
 		p.size,
 		count(distinct ps_suppkey) as supplier_cnt
 from
-		partsupp,
-		part
+		tpch.sf1.partsupp,
+		tpch.sf1.part
 where
 		p.partkey = ps_partkey
 		and p.brand <> 'Brand#45'
@@ -15,7 +15,7 @@ where
 				select
 						s.suppkey
 				from
-						supplier
+						tpch.sf1.supplier
 				where
 						s.comment like '%Customer%Complaints%'
 		)
