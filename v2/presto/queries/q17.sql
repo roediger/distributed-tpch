@@ -1,8 +1,8 @@
 select
 		sum(l.extendedprice) / 7.0 as avg_yearly
 from
-		lineitem,
-		part
+		tpch.sf1.lineitem,
+		tpch.sf1.part
 where
 		p.partkey = l.partkey
 		and p.brand = 'Brand#23'

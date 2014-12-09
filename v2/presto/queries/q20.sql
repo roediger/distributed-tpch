@@ -2,14 +2,14 @@ select
 		s.name,
 		s.address
 from
-		supplier,
-		nation
+		tpch.sf1.supplier,
+		tpch.sf1.nation
 where
 		s.suppkey in (
 				select
 						ps_suppkey
 				from
-						partsupp
+						tpch.sf1.partsupp
 				where
 						ps_partkey in (
 								select

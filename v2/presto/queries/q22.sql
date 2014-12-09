@@ -8,7 +8,7 @@ from
 						substring(c.phone from 1 for 2) as cntrycode,
 						c.acctbal
 				from
-						customer
+						tpch.sf1.customer
 				where
 						substring(c.phone from 1 for 2) in
 								('13', '31', '23', '29', '30', '18', '17')
@@ -16,7 +16,7 @@ from
 								select
 										avg(c.acctbal)
 								from
-										customer
+										tpch.sf1.customer
 								where
 										c.acctbal > 0.00
 										and substring(c.phone from 1 for 2) in
@@ -26,7 +26,7 @@ from
 								select
 										*
 								from
-										orders
+										tpch.sf1.orders
 								where
 										o.custkey = c.custkey
 						)
