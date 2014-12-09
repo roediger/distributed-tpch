@@ -3,7 +3,7 @@ select
 		o.orderpriority,
 		count(*) as order_count
 from
-		tpch.sf1.orders o
+		orders o
 where
 		date_parse(o.orderdate, '%Y-%m-%d') >= date '1993-07-01'
 		and date_parse(o.orderdate, '%Y-%m-%d') < date '1993-10-01'
@@ -11,7 +11,7 @@ where
 				select
 						*
 				from
-						tpch.sf1.lineitem l
+						lineitem l
 				where
 						l.orderkey = o.orderkey
 						and date_parse(l.commitdate, '%Y-%m-%d') < date_parse(l.receiptdate, '%Y-%m-%d')

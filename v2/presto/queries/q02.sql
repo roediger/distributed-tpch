@@ -9,11 +9,11 @@ select
 		s.phone,
 		s.comment
 from
-		tpch.sf1.part p,
-		tpch.sf1.supplier s,
-		tpch.sf1.partsupp ps,
-		tpch.sf1.nation n,
-		tpch.sf1.region r
+		part p,
+		supplier s,
+		partsupp ps,
+		nation n,
+		region r
 where
 		p.partkey = ps.partkey
 		and s.suppkey = ps.suppkey
@@ -26,10 +26,10 @@ where
 				select
 						min(ps.supplycost)
 				from
-						tpch.sf1.partsupp ps,
-						tpch.sf1.supplier s,
-						tpch.sf1.nation n,
-						tpch.sf1.region r
+						partsupp ps,
+						supplier s,
+						nation n,
+						region r
 				where
 						p.partkey = ps.partkey
 						and s.suppkey = ps.suppkey

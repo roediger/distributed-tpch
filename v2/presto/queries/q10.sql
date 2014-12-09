@@ -8,10 +8,10 @@ select top 20
 		c.phone,
 		c.comment
 from
-		tpch.sf1.customer,
-		tpch.sf1.orders,
-		tpch.sf1.lineitem,
-		tpch.sf1.nation
+		customer,
+		orders,
+		lineitem,
+		nation
 where
 		c.custkey = o.custkey
 		and l.orderkey = o.orderkey

@@ -61,13 +61,12 @@ for i in 1..22 do
 		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
 		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
 		query = File.read(query_file)
-		before_query = configuration[:presto][:before_query_sql] || ''
 
 		if File.exists? prepare_file  
 			`#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} #{prepare_file}`
 		end	
 
-		`#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_option]} "#{before_query} #{query.gsub('"', '\\"')}"`
+		`#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} "#{query_file}"`
 	end 		
 end
 

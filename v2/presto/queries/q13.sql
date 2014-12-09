@@ -7,7 +7,7 @@ from
 						c.custkey,
 						count(o.orderkey) c.count
 				from
-						tpch.sf1.customer left outer join orders on
+						customer left outer join orders on
 								c.custkey = o.custkey
 								and o.comment not like '%special%requests%'
 				group by

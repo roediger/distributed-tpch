@@ -4,9 +4,9 @@ select
 		o.orderdate,
 		o.shippriority
 from
-		tpch.sf1.customer c,
-		tpch.sf1.orders o,
-		tpch.sf1.lineitem l
+		customer c,
+		orders o,
+		lineitem l
 where
 		c.mktsegment = 'BUILDING'
 		and c.custkey = o.custkey

@@ -1,8 +1,8 @@
 select
 		sum(l.extendedprice* (1 - l.discount)) as revenue
 from
-		tpch.sf1.lineitem,
-		tpch.sf1.part
+		lineitem,
+		part
 where
 		(
 				p.partkey = l.partkey

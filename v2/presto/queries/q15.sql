@@ -16,8 +16,8 @@ select
 	s.phone,
 	total_revenue
 from
-	tpch.sf1.supplier,
-	tpch.sf1.revenue
+	supplier,
+	revenue
 where
 	s.suppkey = supplier_no
 	and total_revenue = (
