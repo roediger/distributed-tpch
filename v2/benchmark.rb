@@ -10,14 +10,17 @@ options = {
 configuration = {
 	:impala => {
 		:cmd => ENV['IMPALA_CMD'] || 'impala-shell',
+		:query_option => '-q',
 		:query_file_option => '-f'
 	}, 
 	:hive => {
 		:cmd => ENV['HIVE_CMD'] || 'hive',
+		:query_option => '-e',
 		:query_file_option => '-f'
 	}, 
 	:presto => {
 		:cmd => ENV['PRESTO_CMD'] || 'presto',
+		:query_option => '--execute',
 		:query_file_option => '-f'
 	}
 }
@@ -43,13 +46,30 @@ OptionParser.new do |opts|
     end
 end.parse!
 
+### Update Configuration based on parsed options ###
+
+configuration[:presto][:before_query_sql] = "USE CATALOG tpch; USE SCHEMA sf#{options[:scale_factor]};"
+
+
+### Run the queries ###
+
 for i in 1..22 do
 	print "Running query #{i}\n"
 	options[:benchmarks].each do |benchmark|
-		print " -> #{benchmark}\n" 
-		`#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} #{benchmark}/prepare/#{i.to_s.rjust(2, '0')}`	
+		print " -> #{benchmark}\n"
+
+		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
+		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
+		query = File.read(query_file)
+		before_query = configuration[:presto][:before_query_sql] || ''
+
+		if File.exists? prepare_file  
+			`#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} #{prepare_file}`
+		end	
+
+		`#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_option]} "#{before_query} #{query.gsub('"', '\\"')}"`
 	end 		
 end
 
-p options
-p configuration
+#p options
+#p configuration
