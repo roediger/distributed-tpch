@@ -56,6 +56,8 @@ end
 ### Run the queries ###
 
 File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
+  f.sync = true
+  
   options[:benchmarks].each do |benchmark|
     print "#{benchmark}\t"
     f.write "#{benchmark},"
@@ -107,6 +109,8 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
         f.write "\n"
         print "\n"
       end
+      
+      f.flush()
       
       # Finally, clear the FS cache if we know the command
       if options[:drop_caches_cmd]
