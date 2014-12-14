@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'date'
+require 'colorize'
 
 options = {
 	:scale_factor => 1,
@@ -56,10 +57,12 @@ end.parse!
 
 File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
   options[:benchmarks].each do |benchmark|
+    print "#{benchmark}\t"
+    
     f.write "#{benchmark},"
     
     for i in options[:queries] do
-  		print " -> #{benchmark}\n"
+      
 
   		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
   		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
@@ -75,15 +78,29 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
   		end
       
       start = Time.now().to_f
-  		out = `#{configuration[benchmark][:cmd]} #{additional_options} #{configuration[benchmark][:query_file_option]} "#{query_file}" 2>&1`
+  		out = `#{configuration[benchmark][:cmd]} #{additional_options} #{configuration[benchmark][:query_file_option]} "#{query_file}" 2>&1 | tee #{f.path.gsub('.csv', '.log')}`
       d = Time.now().to_f - start
       
-      f.write "#{d}"+(i == options[:queries].last ? '\n' : ',')
+      # Write CSV file
+      if $?.to_i == 0 && out.match(/^(?:"[^"]+"(?:,|\n|$){1})+$/)
+        print ".".green
+        f.write "#{d}"
+      else
+        print ".".red
+      end
+      
+      if i != options[:queries].last
+        f.write ','
+      else
+        f.write "\n"
+        print "\n"
+      end
   	end 		
   end
   
-  File.unlink('benchmark.csv') if File.exists?('benchmark.csv')
-  p "ln -s #{f} ./benchmark.csv"
+  `rm benchmark.csv 2> /dev/null; rm benchmark.log 2> /dev/null`
+  `ln -s #{f.path} ./benchmark.csv`
+  `ln -s #{f.path.gsub('.csv', '.log')} ./benchmark.log`
 end
 
 
