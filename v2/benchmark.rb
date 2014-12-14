@@ -62,12 +62,20 @@ end
 File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
   options[:benchmarks].each do |benchmark|
     print "#{benchmark}\t"
-    
     f.write "#{benchmark},"
     
+    # Benchmark the start time of the command line tool,
+    # because hive shell for example starts way slower than
+    # presto/impala
+    `echo ";" > no_query.sql`
+    start = Time.now().to_f
+    `#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} no_query.sql 2> /dev/null 1> /dev/null`
+    startup_time = Time.now().to_f - start
+    `rm no_query.sql`
+    
+    print "@".green
+    
     for i in options[:queries] do
-      
-
   		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
   		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
   		query = File.read(query_file)
@@ -85,9 +93,9 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
       
       start = Time.now().to_f
   		out = `#{configuration[benchmark][:cmd]} #{additional_options} #{configuration[benchmark][:query_file_option]} "#{query_file}" 2>&1 | tee #{f.path.gsub('.csv', '.log')}`
-      d = Time.now().to_f - start
+      d = Time.now().to_f - start - startup_time
       
-      # TODO subtract test time!
+      # TODO Run each benchmark multiple times
       
       # Write CSV file
       if $?.to_i == 0 && (out.match(/^(?:"[^"]+"(?:,|\n|$){1})+$/) || out.match(/Fetched \d+ row\(s\) in/) || out.match(/OK\nTime taken: \d+\.\d+ seconds$/))
@@ -115,8 +123,3 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
   `ln -s #{f.path} ./benchmark.csv`
   `ln -s #{f.path.gsub('.csv', '.log')} ./benchmark.log`
 end
-
-
-
-#p options
-#p configuration
