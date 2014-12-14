@@ -76,7 +76,6 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
     for i in options[:queries] do
   		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
   		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
-  		query = File.read(query_file)
       
       # Some benchmarks require some additional command line flags
   		additional_options = ""
