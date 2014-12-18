@@ -5,7 +5,6 @@ require 'date'
 require 'colorize'
 
 options = {
-	:scale_factor => 1,
 	:benchmarks => [:impala, :hive, :presto],	
 	:queries => 1..22,
   :drop_caches_cmd => nil
@@ -35,9 +34,6 @@ OptionParser.new do |opts|
 	opts.on("-q", "--queries QUERIES", "Select the queries to run") do |q|
 		options[:queries] = q.split(',').map{|q| q.to_i}
 	end
-	opts.on("-f", "--scale-factor SCALE-FACTOR", "Select the scale factor of the TPC-H data set") do |sf|
-		options[:scale_factor] = Integer(sf)
-	end
 	opts.on("-d", "--drop-caches-cmd DROP-CACHES-CMD", "Select the command to drop the FS cache") do |d|
 		options[:drop_caches_cmd] = d
 	end
@@ -60,6 +56,8 @@ end
 ### Run the queries ###
 
 File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
+  f.sync = true
+  
   options[:benchmarks].each do |benchmark|
     print "#{benchmark}\t"
     f.write "#{benchmark},"
@@ -78,12 +76,11 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
     for i in options[:queries] do
   		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
   		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
-  		query = File.read(query_file)
       
       # Some benchmarks require some additional command line flags
   		additional_options = ""
   		if benchmark == :presto
-  			additional_options = "--catalog tpch --schema sf#{options[:scale_factor]}"	
+  			additional_options = "--catalog tpch --schema sf1"	
   		end
 
       # Run the prepare query
@@ -111,6 +108,8 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
         f.write "\n"
         print "\n"
       end
+      
+      f.flush()
       
       # Finally, clear the FS cache if we know the command
       if options[:drop_caches_cmd]
