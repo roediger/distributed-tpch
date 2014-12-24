@@ -8,7 +8,8 @@ options = {
 	:benchmarks => [:impala, :hive, :vector],	
 	:queries => 1..22,
   :drop_caches_cmd => nil,
-  :n => 1
+  :n => 1,
+  :restart => true
 }
 
 configuration = {
@@ -23,10 +24,10 @@ configuration = {
     :success_regexp => /OK\nTime taken: \d+\.\d+ seconds$/
 	}, 
 	:vector => {
-    # Todo Remove this line     
 		:cmd => ENV['VECTOR_CMD'] || nil,
-		:query_file_option => '<',
     :cmd_end_token => '"',
+    :restart_cmd => ENV['VECTOR_RESTART_CMD'] || nil,
+		:query_file_option => '<',
     :success_regexp => /Your SQL statement\(s\) have been committed/
 	}
 }
@@ -46,6 +47,9 @@ OptionParser.new do |opts|
 	opts.on("-n", "--number NUMBER-OF-RUNS", "Specify the number of runs") do |n|
 		options[:n] = n.to_i
 	end
+	opts.on("-r", "--restart-server RESTART-SERVER", "Specify whether the database server should be restarted between runs") do |r|
+		options[:restart] = !(r.match(/(no|false)/))
+	end
 
 	opts.on("-h", "--hive-cmd HIVE-CMD", "Select the command to run hive") do |cmd|
     configuration[:hive][:cmd] = cmd
@@ -56,6 +60,9 @@ OptionParser.new do |opts|
 	opts.on("-v", "--vector-cmd VECTOR-CMD", "Select the command to run vector") do |cmd|
     configuration[:vector][:cmd] = cmd
   end
+	opts.on("-y", "--vector-restart-cmd VECTOR-CMD", "Select the command to restart vector") do |cmd|
+    configuration[:vector][:restart_cmd] = cmd
+  end
 end.parse!
 
 if !options[:drop_caches_cmd]
@@ -64,7 +71,11 @@ end
 
 # Check the options/configuration
 if configuration[:vector][:cmd] == nil
-  puts "Vector CMD not given"
+  puts "Vector command not given"
+  exit 1
+end
+if configuration[:vector][:restart_cmd] == nil && options[:restart]
+  puts "Vector Restart command not given"
   exit 1
 end
 
@@ -102,7 +113,7 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
       for i in options[:queries] do
     		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
     		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
-
+        
         # Run the prepare query
     		if File.exists? prepare_file  
     			out = `#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} #{prepare_file} 2>&1 | tee -a #{f.path.gsub('.csv', '.log')}`
@@ -111,7 +122,12 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
         # Clear the FS cache if the command was given
         # and restart the server if possible
         if options[:drop_caches_cmd]
-          `#{options[:drop_caches_cmd]}`
+          `#{options[:drop_caches_cmd]} 2>&1 | tee -a #{f.path.gsub('.csv', '.log')}`
+        end
+        
+        # Restart the server
+        if benchmark == :vector && options[:restart]
+          `#{configuration[benchmark][:restart_cmd]}`
         end
     
         # Run the actual TPC-H query, taking start

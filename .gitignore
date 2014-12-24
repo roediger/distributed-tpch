@@ -1,2 +1,11 @@
 *.swp
 derby.log
+.DS_Store
+._*
+.fuse_hidden*
+*~
+benchmark.*.csv
+benchmark.*.log
+benchmark.csv
+benchmark.log
+
