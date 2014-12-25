@@ -32,6 +32,24 @@ configuration = {
 	}
 }
 
+class Benchmark 
+  
+  ## 
+  # Called once 
+  ##
+  def setup()
+  end
+  
+  ##
+  # 
+  ##
+  def before_run()
+  end
+  
+  def run()
+  end
+end
+
 OptionParser.new do |opts|
 	opts.banner = "Usage: example.rb [options]"
 
