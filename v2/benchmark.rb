@@ -3,122 +3,98 @@
 require 'optparse'
 require 'date'
 require 'colorize'
+require 'ostruct'
 
-options = {
-	:benchmarks => [:impala, :hive, :vector],	
-	:queries => 1..22,
-  :drop_caches_cmd => nil,
-  :n => 1,
-  :restart => true
-}
+options = OpenStruct.new
+options.benchmarks = [:impala, :hive, :vector]
+options.queries = 1..22
+options.n = 1
+options.drop_caches = true
+options.restart = true
+options.drop_caches_cmd = '/usr/local/bin/flush_fs_caches'
 
 configuration = {
   :impala => {
-		:cmd => ENV['IMPALA_CMD'] || 'impala-shell',
+		:cmd => ENV['IMPALA_CMD'] || 'impala-shell $ARGS',
+    :query_option => '-q',
 		:query_file_option => '-f',
     :success_regexp => /Fetched \d+ row\(s\) in/
 	}, 
 	:hive => {
-		:cmd => ENV['HIVE_CMD'] || 'hive',
+		:cmd => ENV['HIVE_CMD'] || 'sudo -u hive hive $ARGS',
+    :query_option => '-e',
 		:query_file_option => '-f',
     :success_regexp => /OK\nTime taken: \d+\.\d+ seconds$/
 	}, 
 	:vector => {
-		:cmd => ENV['VECTOR_CMD'] || nil,
-    :cmd_end_token => '"',
-    :restart_cmd => ENV['VECTOR_RESTART_CMD'] || nil,
+		:cmd => ENV['VECTOR_CMD'] || 'sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/sql $ARGS"',
+    :restart_cmd => ENV['VECTOR_RESTART_CMD'] || 'sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/utility/ingstop -f; /opt/Actian/AnalyticsPlatformAH/ingres/utility/ingstart"',
 		:query_file_option => '<',
     :success_regexp => /Your SQL statement\(s\) have been committed/
 	}
 }
 
-class Benchmark 
-  
-  ## 
-  # Called once 
-  ##
-  def setup()
-  end
-  
-  ##
-  # 
-  ##
-  def before_run()
-  end
-  
-  def run()
-  end
-end
-
 OptionParser.new do |opts|
-	opts.banner = "Usage: example.rb [options]"
+	opts.banner = "Usage: #{$0} [options]"
 
-	opts.on("-b", "--benchmarks BENCHMARKS", "Select Benchmarks to run") do |b|
-  		options[:benchmarks] = b.split(',').map{|b| b.to_sym}
+	opts.on("-b", "--benchmarks impala,hive,vector", Array, "Select the benchmarks to run") do |b|
+  		options.benchmarks = b.map{|b| b.to_sym}
   	end
 	opts.on("-q", "--queries QUERIES", "Select the queries to run") do |q|
-		options[:queries] = q.split(',').map{|q| q.to_i}
+		options.queries = q.split(',').map{|q| q.to_i}
 	end
-	opts.on("-d", "--drop-caches-cmd DROP-CACHES-CMD", "Select the command to drop the FS cache") do |d|
-		options[:drop_caches_cmd] = d
+	opts.on("-d", "--drop-caches [DROP-CACHES]", [:true, :false], "Select if FS caches should be dropped") do |d|
+		options.drop_caches = (d == :true)
 	end
-	opts.on("-n", "--number NUMBER-OF-RUNS", "Specify the number of runs") do |n|
-		options[:n] = n.to_i
+	opts.on("-n", "--runs NUMBER-OF-RUNS", "Specify the number of runs") do |n|
+		options.n = n.to_i
 	end
-	opts.on("-r", "--restart-server RESTART-SERVER", "Specify whether the database server should be restarted between runs") do |r|
-		options[:restart] = !(r.match(/(no|false)/))
+	opts.on("-r", "--restart-server [RESTART-SERVER]", [:true, :false], "Specify whether the database server should be restarted between runs") do |r|
+		options.restart = (r == :true)
 	end
+  
+  opts.on_tail("-h", "--help", "Show this message") do
+    puts opts
+    exit
+  end
+end.parse!(ARGV)
 
-	opts.on("-h", "--hive-cmd HIVE-CMD", "Select the command to run hive") do |cmd|
-    configuration[:hive][:cmd] = cmd
-  end
-	opts.on("-i", "--impala-cmd IMPALA-CMD", "Select the command to run impala") do |cmd|
-    configuration[:impala][:cmd] = cmd
-  end
-	opts.on("-v", "--vector-cmd VECTOR-CMD", "Select the command to run vector") do |cmd|
-    configuration[:vector][:cmd] = cmd
-  end
-	opts.on("-y", "--vector-restart-cmd VECTOR-CMD", "Select the command to restart vector") do |cmd|
-    configuration[:vector][:restart_cmd] = cmd
-  end
-end.parse!
+puts "Configuration:"
+puts "\tBenchmarks: \t"+options.benchmarks.join(', ')
+puts "\t#Queries: \t"+options.queries.count.to_s
+puts "\tRuns: \t\t"+options.n.to_s
+puts "\tRestart DB: \t"+options.restart.to_s
+puts "\tDrop Caches: \t"+options.drop_caches.to_s
 
-if !options[:drop_caches_cmd]
-  print "Warning: Argument --drop-caches-cmd not given, the FS caches will not be cleared between runs\n"
-end
-
-# Check the options/configuration
-if configuration[:vector][:cmd] == nil
-  puts "Vector command not given"
-  exit 1
-end
-if configuration[:vector][:restart_cmd] == nil && options[:restart]
-  puts "Vector Restart command not given"
-  exit 1
-end
 
 ### Run the queries ###
 
-File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
+def cmd(benchmark, args)
+  configuration[benchmark][:cmd].gsub('$ARGS', args)+" 2>&1 | tee -a benchmark.log"
+end
+
+`rm benchmark.csv 2> /dev/null; rm benchmark.log 2> /dev/null`
+File.open("benchmark.csv", 'w') do |f|
   f.sync = true
-  
-  # set symlinks benchmark.csv and benchmark.log to the currently
-  # active files
-  `rm benchmark.csv 2> /dev/null; rm benchmark.log 2> /dev/null`
-  `ln -s #{f.path} ./benchmark.csv`
-  `ln -s #{f.path.gsub('.csv', '.log')} ./benchmark.log`
-  
-  options[:benchmarks].each do |benchmark|
-    end_token = configuration[benchmark][:cmd_end_token] || ''
+    
+  options.benchmarks.each do |benchmark|
     
     # Benchmark the start time of the command line tool,
     # because hive shell for example starts way slower than
     # impala
-    `echo ";#{(benchmark == :vector ? '\g' : '')}" > no_query.sql`
-    start = Time.now().to_f
-    `#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} no_query.sql#{end_token} 2> /dev/null 1> /dev/null`
-    startup_time = Time.now().to_f - start
-    `rm no_query.sql`
+    if benchmark == :vector
+      `echo ";\\g" > no_query.sql`
+      
+      start = Time.now().to_f
+      %x( cmd(benchmark, "#{configuration[benchmark][:query_file_option]} no_query.sql") )
+      startup_time = Time.now().to_f - start
+      
+      `rm no_query.sql`
+    else
+      start = Time.now().to_f
+      %x( cmd(benchmark, "#{configuration[benchmark][:query_option]} \";\"") )
+      startup_time = Time.now().to_f - start
+    end
     
     # Run each benchmark N times
     for n in 1..options[:n] do 
@@ -134,24 +110,30 @@ File.open("benchmark.#{DateTime.now().to_time.to_i}.csv", 'w') do |f|
         
         # Run the prepare query
     		if File.exists? prepare_file  
-    			out = `#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} #{prepare_file} 2>&1 | tee -a #{f.path.gsub('.csv', '.log')}`
+          %x( cmd(benchmark, "#{configuration[benchmark][:query_file_option]} #{prepare_file}") )
     		end
         
         # Clear the FS cache if the command was given
         # and restart the server if possible
-        if options[:drop_caches_cmd]
-          `#{options[:drop_caches_cmd]} 2>&1 | tee -a #{f.path.gsub('.csv', '.log')}`
+        if options.drop_caches
+          `#{options.drop_caches_cmd]} 2>&1 | tee -a benchmark.log`
         end
         
         # Restart the server
-        if benchmark == :vector && options[:restart]
-          `#{configuration[benchmark][:restart_cmd]}`
+        if options.restart
+          if benchmark == :vector
+            `#{configuration[:vector][:restart_cmd]}`
+          end
         end
     
         # Run the actual TPC-H query, taking start
         # and end time
         start = Time.now().to_f
-    		out = `#{configuration[benchmark][:cmd]} #{configuration[benchmark][:query_file_option]} '#{query_file}'#{end_token} 2>&1 | tee -a #{f.path.gsub('.csv', '.log')}` 
+        if configuration[benchmark][:query_option]
+          %x( cmd(benchmark, "#{configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"") )
+        else
+          %x( cmd(benchmark, "#{configuration[benchmark][:query_file_option]} #{query_file}") )
+        end
         d = Time.now().to_f - start - startup_time
     
         # Check if the output matches with expected success output patterns
