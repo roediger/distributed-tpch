@@ -13,7 +13,7 @@ options.drop_caches = true
 options.restart = true
 options.drop_caches_cmd = '/usr/local/bin/flush_fs_caches'
 
-configuration = {
+$configuration = {
   :impala => {
 		:cmd => ENV['IMPALA_CMD'] || 'impala-shell $ARGS',
     :query_option => '-q',
@@ -27,7 +27,7 @@ configuration = {
     :success_regexp => /OK\nTime taken: \d+\.\d+ seconds$/
 	}, 
 	:vector => {
-		:cmd => ENV['VECTOR_CMD'] || 'sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/sql $ARGS"',
+		:cmd => ENV['VECTOR_CMD'] || 'sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/sql dbtest $ARGS"',
     :restart_cmd => ENV['VECTOR_RESTART_CMD'] || 'sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/utility/ingstop -f; /opt/Actian/AnalyticsPlatformAH/ingres/utility/ingstart"',
 		:query_file_option => '<',
     :success_regexp => /Your SQL statement\(s\) have been committed/
@@ -59,7 +59,7 @@ OptionParser.new do |opts|
   end
 end.parse!(ARGV)
 
-puts "Configuration:"
+puts "$configuration:"
 puts "\tBenchmarks: \t"+options.benchmarks.join(', ')
 puts "\t#Queries: \t"+options.queries.count.to_s
 puts "\tRuns: \t\t"+options.n.to_s
@@ -70,7 +70,7 @@ puts "\tDrop Caches: \t"+options.drop_caches.to_s
 ### Run the queries ###
 
 def cmd(benchmark, args)
-  configuration[benchmark][:cmd].gsub('$ARGS', args)+" 2>&1 | tee -a benchmark.log"
+  $configuration[benchmark][:cmd].gsub('$ARGS', args)+" 2>&1 | tee -a benchmark.log"
 end
 
 `rm benchmark.csv 2> /dev/null; rm benchmark.log 2> /dev/null`
@@ -83,16 +83,16 @@ File.open("benchmark.csv", 'w') do |f|
     # because hive shell for example starts way slower than
     # impala
     if benchmark == :vector
-      `echo ";\\g" > no_query.sql`
+      File.open('no_query.sql', 'w') {|f| f.write(';\g') }
       
       start = Time.now().to_f
-      %x( cmd(benchmark, "#{configuration[benchmark][:query_file_option]} no_query.sql") )
+      `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} no_query.sql")}`
       startup_time = Time.now().to_f - start
       
       `rm no_query.sql`
     else
       start = Time.now().to_f
-      %x( cmd(benchmark, "#{configuration[benchmark][:query_option]} \";\"") )
+      `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \";\"")}`
       startup_time = Time.now().to_f - start
     end
     
@@ -110,42 +110,42 @@ File.open("benchmark.csv", 'w') do |f|
         
         # Run the prepare query
     		if File.exists? prepare_file  
-          %x( cmd(benchmark, "#{configuration[benchmark][:query_file_option]} #{prepare_file}") )
+          `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{prepare_file}")}`
     		end
         
         # Clear the FS cache if the command was given
         # and restart the server if possible
         if options.drop_caches
-          `#{options.drop_caches_cmd]} 2>&1 | tee -a benchmark.log`
+          `#{options.drop_caches_cmd} 2>&1 | tee -a benchmark.log`
         end
         
         # Restart the server
         if options.restart
-          if benchmark == :vector
-            `#{configuration[:vector][:restart_cmd]}`
+          if $configuration[benchmark][:restart_cmd]
+            `#{$configuration[benchmark][:restart_cmd]} 2>&1 | tee -a benchmark.log`
           end
         end
     
         # Run the actual TPC-H query, taking start
         # and end time
         start = Time.now().to_f
-        if configuration[benchmark][:query_option]
-          %x( cmd(benchmark, "#{configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"") )
+        if $configuration[benchmark][:query_option]
+          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")}` if File.exist? query_file
         else
-          %x( cmd(benchmark, "#{configuration[benchmark][:query_file_option]} #{query_file}") )
+          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{query_file}")}`
         end
         d = Time.now().to_f - start - startup_time
     
         # Check if the output matches with expected success output patterns
         # and write result to CSV file
-        if $?.to_i == 0 && configuration.collect{|k, v| v[:success_regexp]}.map{|r| out.match(r)}.any?
+        if $?.to_i == 0 && $configuration.collect{|k, v| v[:success_regexp]}.map{|r| out.match(r)}.any?
           print ".".green
           f.write "#{d}"
         else
           print ".".red
         end
     
-        if i != options[:queries].last
+        if i != options.queries.last
           f.write ','
         else
           f.write "\n"
