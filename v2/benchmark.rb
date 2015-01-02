@@ -134,11 +134,12 @@ File.open("benchmark.csv", 'w') do |f|
         else
           out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{query_file}")}`
         end
-        d = Time.now().to_f - start - startup_time
+        
+        d = out.nil ? 0 : Time.now().to_f - start - startup_time
     
         # Check if the output matches with expected success output patterns
         # and write result to CSV file
-        if $?.to_i == 0 && $configuration.collect{|k, v| v[:success_regexp]}.map{|r| out.match(r)}.any?
+        if $?.to_i == 0 && !out.nil? && out.match($configuration[benchmark][:success_regexp])
           print ".".green
           f.write "#{d}"
         else
