@@ -49,3 +49,4 @@ order by
 	s_name,
 	p_partkey;
 first 100
+	\g

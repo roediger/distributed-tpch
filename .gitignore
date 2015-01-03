@@ -1,7 +1,11 @@
 *.swp
 derby.log
 .DS_Store
+
+._*.sql
+._.DS_Store
 ._*
+
 .fuse_hidden*
 *~
 benchmark.*.csv

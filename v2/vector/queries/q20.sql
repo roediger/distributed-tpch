@@ -42,4 +42,4 @@ where
 	and n_name = 'CANADA'
 order by
 	s_name;
-first -1
+	\g

@@ -44,4 +44,4 @@ order by
 	supp_nation,
 	cust_nation,
 	l_year;
-first -1
+	\g

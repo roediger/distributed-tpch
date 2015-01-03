@@ -135,7 +135,7 @@ File.open("benchmark.csv", 'w') do |f|
           out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{query_file}")}`
         end
         
-        d = out.nil ? 0 : Time.now().to_f - start - startup_time
+        d = out.nil? ? 0 : Time.now().to_f - start - startup_time
     
         # Check if the output matches with expected success output patterns
         # and write result to CSV file

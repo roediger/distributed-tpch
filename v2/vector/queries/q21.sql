@@ -5,7 +5,7 @@
 -- Approved February 1998
 
 
-select
+select first 100
 	s_name,
 	count(*) as numwait
 from
@@ -43,5 +43,4 @@ group by
 	s_name
 order by
 	numwait desc,
-	s_name;
-first 100
+	s_name;\g

@@ -31,5 +31,4 @@ group by
 				and n_name = 'GERMANY'
 		)
 order by
-	value desc;
-first -1
+	value desc;\g

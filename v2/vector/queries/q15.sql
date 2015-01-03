@@ -38,4 +38,4 @@ order by
 	s_suppkey;
 
 drop view revenue0;
-first -1
+	\g

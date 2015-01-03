@@ -22,4 +22,4 @@ where
 		where
 			l_partkey = p_partkey
 	);
-first -1
+	\g

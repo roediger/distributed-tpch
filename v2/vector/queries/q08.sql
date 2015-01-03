@@ -42,4 +42,4 @@ group by
 	o_year
 order by
 	o_year;
-first -1
+	\g

@@ -25,4 +25,4 @@ group by
 order by
 	custdist desc,
 	c_count desc;
-first -1
+	\g

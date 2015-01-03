@@ -37,4 +37,4 @@ group by
 order by
 	nation,
 	o_year desc;
-first -1
+	\g

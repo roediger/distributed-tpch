@@ -42,4 +42,4 @@ group by
 	cntrycode
 order by
 	cntrycode;
-first -1
+	\g

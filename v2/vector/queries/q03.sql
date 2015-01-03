@@ -28,3 +28,4 @@ order by
 	revenue desc,
 	o_orderdate;
 first 10
+	\g

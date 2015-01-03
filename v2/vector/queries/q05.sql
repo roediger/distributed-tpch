@@ -29,4 +29,4 @@ group by
 	n_name
 order by
 	revenue desc;
-first -1
+	\g

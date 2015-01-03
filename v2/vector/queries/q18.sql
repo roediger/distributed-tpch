@@ -38,3 +38,4 @@ order by
 	o_totalprice desc,
 	o_orderdate;
 first 100
+\g

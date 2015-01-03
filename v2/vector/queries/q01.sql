@@ -26,4 +26,4 @@ group by
 order by
 	l_returnflag,
 	l_linestatus;
-first -1
+	\g
