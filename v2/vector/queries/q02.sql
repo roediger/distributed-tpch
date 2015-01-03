@@ -5,7 +5,7 @@
 -- Approved February 1998
 
 
-select
+select first 100
 	s_acctbal,
 	s_name,
 	n_name,
@@ -48,5 +48,4 @@ order by
 	n_name,
 	s_name,
 	p_partkey;
-first 100
 	\g

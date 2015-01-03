@@ -5,7 +5,7 @@
 -- Approved February 1998
 
 
-select
+select first 20
 	c_custkey,
 	c_name,
 	sum(l_extendedprice * (1 - l_discount)) as revenue,
@@ -36,4 +36,3 @@ group by
 	c_comment
 order by
 	revenue desc;
-first 20\g

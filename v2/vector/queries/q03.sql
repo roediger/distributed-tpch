@@ -5,7 +5,7 @@
 -- Approved February 1998
 
 
-select
+select first 10
 	l_orderkey,
 	sum(l_extendedprice * (1 - l_discount)) as revenue,
 	o_orderdate,
@@ -27,5 +27,4 @@ group by
 order by
 	revenue desc,
 	o_orderdate;
-first 10
 	\g

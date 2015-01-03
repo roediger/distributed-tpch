@@ -5,7 +5,7 @@
 -- Approved February 1998
 
 
-select
+select first 100
 	c_name,
 	c_custkey,
 	o_orderkey,
@@ -37,5 +37,4 @@ group by
 order by
 	o_totalprice desc,
 	o_orderdate;
-first 100
 \g
