@@ -103,10 +103,15 @@ File.open("benchmark.csv", 'w') do |f|
       n_str = options[:n] > 1 ? " (#{n})" : ""
       print "#{benchmark}#{n_str}\t"
       f.write "#{benchmark}#{n_str},"
+      
+      # Write measured startup time
+      f.write "#{startup_time},"
   
       for i in options[:queries] do
     		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
     		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
+        
+        `echo "Running Benchmark #{benchmark}, Query #{i}, Run #{n}"`
         
         # Run the prepare query
     		if File.exists? prepare_file  
@@ -129,6 +134,7 @@ File.open("benchmark.csv", 'w') do |f|
         # Run the actual TPC-H query, taking start
         # and end time
         start = Time.now().to_f
+        out = nil
         if $configuration[benchmark][:query_option]
           out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")}` if File.exist? query_file
         else

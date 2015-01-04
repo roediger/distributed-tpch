@@ -36,3 +36,4 @@ group by
 	c_comment
 order by
 	revenue desc;
+	\g
