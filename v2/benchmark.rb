@@ -111,7 +111,7 @@ File.open("benchmark.csv", 'w') do |f|
     		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
     		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
         
-        `echo "Running Benchmark #{benchmark}, Query #{i}, Run #{n}"`
+        `echo "Running Benchmark #{benchmark}, Query #{i}, Run #{n}" > benchmark.log`
         
         # Run the prepare query
     		if File.exists? prepare_file  
