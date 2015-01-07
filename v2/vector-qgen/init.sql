@@ -1,3 +1,12 @@
+DROP TABLE nation;
+DROP TABLE region;
+DROP TABLE part;
+DROP TABLE supplier;
+DROP TABLE partsupp;
+DROP TABLE customer;
+DROP TABLE orders;
+DROP TABLE lineitem;
+
 CREATE TABLE nation  ( N_NATIONKEY  INTEGER NOT NULL,
                             N_NAME       CHAR(25) NOT NULL,
                             N_REGIONKEY  INTEGER NOT NULL,
@@ -152,6 +161,6 @@ COPY TABLE orders (
         O_CLERK = 'c0|',
         O_SHIPPRIORITY = 'c0|',
         O_COMMENT = 'c0nl'
-) FROM '/space/tpch100/orders.tbl';
+) FROM '/space/tpch100/orders.tbl';\g
 
 

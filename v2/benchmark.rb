@@ -73,7 +73,25 @@ def cmd(benchmark, args)
   $configuration[benchmark][:cmd].gsub('$ARGS', args)+" 2>&1 | tee -a benchmark.log"
 end
 
-`rm benchmark.csv 2> /dev/null; rm benchmark.log 2> /dev/null`
+def benchmark(n=1, &block)
+  t = []
+  for i in 1..n do
+    start = Time.now().to_f
+    block.call
+    t << Time.now().to_f - start
+  end
+  return n == 1 ? t[0] : t
+end
+
+class Array
+  def median
+    sorted = self.sort
+    half_len = (sorted.length / 2.0).ceil
+    (sorted[half_len-1] + sorted[-half_len]) / 2.0
+  end
+end
+
+`rm -f benchmark.csv; rm -f benchmark.log; rm -rf ./log; mkdir log`
 File.open("benchmark.csv", 'w') do |f|
   f.sync = true
     
@@ -85,15 +103,15 @@ File.open("benchmark.csv", 'w') do |f|
     if benchmark == :vector
       File.open('no_query.sql', 'w') {|f| f.write(';\g') }
       
-      start = Time.now().to_f
-      `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} no_query.sql")}`
-      startup_time = Time.now().to_f - start
+      startup_time = (benchmark 3 do 
+        `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} no_query.sql")}`
+      end).median
       
       `rm no_query.sql`
     else
-      start = Time.now().to_f
-      `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \";\"")}`
-      startup_time = Time.now().to_f - start
+      startup_time = (benchmark 3 do 
+        `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \";\"")}`
+      end).median
     end
     
     # Run each benchmark N times
@@ -111,7 +129,7 @@ File.open("benchmark.csv", 'w') do |f|
     		prepare_file = "#{benchmark}/prepare/q#{i.to_s.rjust(2, '0')}.sql"
     		query_file = "#{benchmark}/queries/q#{i.to_s.rjust(2, '0')}.sql"
         
-        `echo "Running Benchmark #{benchmark}, Query #{i}, Run #{n}" > benchmark.log`
+        `echo "Running Benchmark #{benchmark}, Query #{i}, Run #{n}" >> benchmark.log`
         
         # Run the prepare query
     		if File.exists? prepare_file  
@@ -135,10 +153,11 @@ File.open("benchmark.csv", 'w') do |f|
         # and end time
         start = Time.now().to_f
         out = nil
+        log_cmd = " tee log/#{benchmark}-#{i}-#{n}.out"
         if $configuration[benchmark][:query_option]
-          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")}` if File.exist? query_file
+          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")} #{log_cmd}` if File.exist? query_file
         else
-          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{query_file}")}`
+          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{query_file}")} #{log_cmd}`
         end
         
         d = out.nil? ? 0 : Time.now().to_f - start - startup_time
