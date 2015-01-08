@@ -11,7 +11,7 @@ options.queries = 1..22
 options.n = 1
 options.drop_caches = true
 options.restart = true
-options.drop_caches_cmd = '/usr/local/bin/flush_fs_caches'
+options.drop_caches_cmd = 'for i in `seq 11 16`;do ssh scyper$i "/usr/local/bin/flush_fs_caches"; done'
 
 $configuration = {
   :impala => {
