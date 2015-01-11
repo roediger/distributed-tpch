@@ -1,20 +1,23 @@
-DROP TABLE nation;
-DROP TABLE region;
-DROP TABLE part;
-DROP TABLE supplier;
-DROP TABLE partsupp;
-DROP TABLE customer;
-DROP TABLE orders;
-DROP TABLE lineitem;
+DROP TABLE IF EXISTS nation;
+DROP TABLE IF EXISTS region;
+DROP TABLE IF EXISTS part;
+DROP TABLE IF EXISTS supplier;
+DROP TABLE IF EXISTS partsupp;
+DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS orders; 
+DROP TABLE IF EXISTS lineitem;
 
 CREATE TABLE nation  ( N_NATIONKEY  INTEGER NOT NULL,
                             N_NAME       CHAR(25) NOT NULL,
                             N_REGIONKEY  INTEGER NOT NULL,
-                            N_COMMENT    VARCHAR(152));
+                            N_COMMENT    VARCHAR(152),
+							primary key(N_NATIONKEY)
+						);
 
 CREATE TABLE region  ( R_REGIONKEY  INTEGER NOT NULL,
                             R_NAME       CHAR(25) NOT NULL,
-                            R_COMMENT    VARCHAR(152));
+                            R_COMMENT    VARCHAR(152),
+						 primary key (r_regionkey));
 
 CREATE TABLE part  ( P_PARTKEY     INTEGER NOT NULL,
                           P_NAME        VARCHAR(55) NOT NULL,
@@ -24,7 +27,8 @@ CREATE TABLE part  ( P_PARTKEY     INTEGER NOT NULL,
                           P_SIZE        INTEGER NOT NULL,
                           P_CONTAINER   CHAR(10) NOT NULL,
                           P_RETAILPRICE DECIMAL(15,2) NOT NULL,
-                          P_COMMENT     VARCHAR(23) NOT NULL );
+                          P_COMMENT     VARCHAR(23) NOT NULL,
+					       primary key (p_partkey) );
 
 CREATE TABLE supplier  ( S_SUPPKEY     INTEGER NOT NULL,
                              S_NAME        CHAR(25) NOT NULL,
@@ -32,13 +36,17 @@ CREATE TABLE supplier  ( S_SUPPKEY     INTEGER NOT NULL,
                              S_NATIONKEY   INTEGER NOT NULL,
                              S_PHONE       CHAR(15) NOT NULL,
                              S_ACCTBAL     DECIMAL(15,2) NOT NULL,
-                             S_COMMENT     VARCHAR(101) NOT NULL);
+                             S_COMMENT     VARCHAR(101) NOT NULL,
+							 primary key (s_suppkey)
+						 );
 
 CREATE TABLE partsupp  ( PS_PARTKEY     INTEGER NOT NULL,
                              PS_SUPPKEY     INTEGER NOT NULL,
                              PS_AVAILQTY    INTEGER NOT NULL,
                              PS_SUPPLYCOST  DECIMAL(15,2)  NOT NULL,
-                             PS_COMMENT     VARCHAR(199) NOT NULL );
+                             PS_COMMENT     VARCHAR(199) NOT NULL,
+						  primary key (ps_partkey, ps_suppkey)
+					   );
 
 CREATE TABLE customer  ( C_CUSTKEY     INTEGER NOT NULL,
                              C_NAME        VARCHAR(25) NOT NULL,
@@ -47,7 +55,8 @@ CREATE TABLE customer  ( C_CUSTKEY     INTEGER NOT NULL,
                              C_PHONE       CHAR(15) NOT NULL,
                              C_ACCTBAL     DECIMAL(15,2)   NOT NULL,
                              C_MKTSEGMENT  CHAR(10) NOT NULL,
-                             C_COMMENT     VARCHAR(117) NOT NULL);
+                             C_COMMENT     VARCHAR(117) NOT NULL,
+						 primary key (c_custkey));
 
 CREATE TABLE orders  ( O_ORDERKEY       INTEGER NOT NULL,
                            O_CUSTKEY        INTEGER NOT NULL,
@@ -57,7 +66,8 @@ CREATE TABLE orders  ( O_ORDERKEY       INTEGER NOT NULL,
                            O_ORDERPRIORITY  CHAR(15) NOT NULL,  
                            O_CLERK          CHAR(15) NOT NULL, 
                            O_SHIPPRIORITY   INTEGER NOT NULL,
-                           O_COMMENT        VARCHAR(79) NOT NULL);
+                           O_COMMENT        VARCHAR(79) NOT NULL,
+					   primary key (o_orderkey));
 
 CREATE TABLE lineitem ( L_ORDERKEY    INTEGER NOT NULL,
                              L_PARTKEY     INTEGER NOT NULL,
@@ -74,7 +84,8 @@ CREATE TABLE lineitem ( L_ORDERKEY    INTEGER NOT NULL,
                              L_RECEIPTDATE DATE NOT NULL,
                              L_SHIPINSTRUCT CHAR(25) NOT NULL,
                              L_SHIPMODE     CHAR(10) NOT NULL,
-                             L_COMMENT      VARCHAR(44) NOT NULL);
+                             L_COMMENT      VARCHAR(44) NOT NULL,
+						  primary key (l_orderkey,l_linenumber));
 							 
 -- Copy Data
 
@@ -95,20 +106,20 @@ COPY TABLE lineitem (
         l_shipinstruct = 'c0|',
         l_shipmode = 'c0|',
         l_comment = 'c0nl'
-) FROM '/space/tpch100/lineitem.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/lineitem.tbl';
 
 COPY TABLE nation (
         N_NATIONKEY = 'c0|',
         N_NAME = 'c0|',
         N_REGIONKEY = 'c0|',
         N_COMMENT = 'c0nl'
-) FROM '/space/tpch100/nation.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/nation.tbl';
 
 COPY TABLE region (
         R_REGIONKEY = 'c0|',
         R_NAME = 'c0|',
         R_COMMENT = 'c0nl'
-) FROM '/space/tpch100/region.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/region.tbl';
 
 COPY TABLE part (
         P_PARTKEY = 'c0|',
@@ -120,7 +131,7 @@ COPY TABLE part (
         P_CONTAINER = 'c0|',
         P_RETAILPRICE = 'c0|',
         P_COMMENT = 'c0nl'
-) FROM '/space/tpch100/part.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/part.tbl';
 
 COPY TABLE supplier (
         S_SUPPKEY = 'c0|',
@@ -130,7 +141,7 @@ COPY TABLE supplier (
         S_PHONE = 'c0|',
         S_ACCTBAL = 'c0|',
         S_COMMENT = 'c0nl'
-) FROM '/space/tpch100/supplier.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/supplier.tbl';
 
 COPY TABLE partsupp (
         PS_PARTKEY = 'c0|',
@@ -138,7 +149,7 @@ COPY TABLE partsupp (
         PS_AVAILQTY = 'c0|',
         PS_SUPPLYCOST = 'c0|',
         PS_COMMENT = 'c0nl'
-) FROM '/space/tpch100/partsupp.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/partsupp.tbl';
 
 COPY TABLE customer (
         C_CUSTKEY = 'c0|',
@@ -149,7 +160,7 @@ COPY TABLE customer (
         C_ACCTBAL = 'c0|',
         C_MKTSEGMENT = 'c0|',
         C_COMMENT = 'c0nl'
-) FROM '/space/tpch100/customer.tbl';
+) FROM '/home/erik/scyper16/space/tpch100/customer.tbl';
 
 COPY TABLE orders (
         O_ORDERKEY = 'c0|',
@@ -161,6 +172,6 @@ COPY TABLE orders (
         O_CLERK = 'c0|',
         O_SHIPPRIORITY = 'c0|',
         O_COMMENT = 'c0nl'
-) FROM '/space/tpch100/orders.tbl';\g
+) FROM '/home/erik/scyper16/space/tpch100/orders.tbl';\g
 
 

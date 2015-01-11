@@ -15,7 +15,7 @@ options.drop_caches_cmd = 'for i in `seq 11 16`;do ssh scyper$i "/usr/local/bin/
 
 $configuration = {
   :impala => {
-		:cmd => ENV['IMPALA_CMD'] || 'impala-shell $ARGS',
+		:cmd => ENV['IMPALA_CMD'] || 'impala-shell --database=tpch_parquet $ARGS',
     :query_option => '-q',
 		:query_file_option => '-f',
     :success_regexp => /Fetched \d+ row\(s\) in/
