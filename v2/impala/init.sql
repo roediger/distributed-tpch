@@ -127,97 +127,36 @@ STORED AS TEXTFILE
 LOCATION '/tpch/100/orders';
 
 -- create parquet tables
-CREATE TABLE tpch_parquet.lineitem (
-	L_ORDERKEY INT, 
-	L_PARTKEY INT, 
-	L_SUPPKEY INT, 
-	L_LINENUMBER INT, 
-	L_QUANTITY DOUBLE, 
-	L_EXTENDEDPRICE DOUBLE, 
-	L_DISCOUNT DOUBLE, 
-	L_TAX DOUBLE, 
-	L_RETURNFLAG STRING, 
-	L_LINESTATUS STRING, 
-	L_SHIPDATE STRING, 
-	L_COMMITDATE STRING, 
-	L_RECEIPTDATE STRING, 
-	L_SHIPINSTRUCT STRING, 
-	L_SHIPMODE STRING, 
-	L_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.lineitem
+LIKE default.lineitem 
 STORED AS PARQUET;
 
-CREATE TABLE tpch_parquet.part (
-	P_PARTKEY INT, 
-	P_NAME STRING, 
-	P_MFGR STRING, 
-	P_BRAND STRING, 
-	P_TYPE STRING, 
-	P_SIZE INT, 
-	P_CONTAINER STRING, 
-	P_RETAILPRICE DOUBLE, 
-	P_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.part
+LIKE default.part
 STORED AS PARQUET;
 
-CREATE TABLE tpch_parquet.supplier (
-	S_SUPPKEY INT, 
-	S_NAME STRING, 
-	S_ADDRESS STRING, 
-	S_NATIONKEY INT, 
-	S_PHONE STRING, 
-	S_ACCTBAL DOUBLE, 
-	S_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.supplier
+LIKE default.supplier
 STORED AS PARQUET;
 
-CREATE TABLE tpch_parquet.partsupp (
-	PS_PARTKEY INT, 
-	PS_SUPPKEY INT, 
-	PS_AVAILQTY INT, 
-	PS_SUPPLYCOST DOUBLE, 
-	PS_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.partsupp
+LIKE default.partsupp
 STORED AS TEXTFILE;
 
-CREATE TABLE tpch_parquet.nation (
-	N_NATIONKEY INT, 
-	N_NAME STRING, 
-	N_REGIONKEY INT, 
-	N_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.nation
+LIKE default.nation
 STORED AS PARQUET;
 
-CREATE TABLE tpch_parquet.region (
-	R_REGIONKEY INT, 
-	R_NAME STRING, 
-	R_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.region
+LIKE default.region
 STORED AS PARQUET;
 
-CREATE TABLE tpch_parquet.customer (
-	C_CUSTKEY INT, 
-	C_NAME STRING, 
-	C_ADDRESS STRING, 
-	C_NATIONKEY INT, 
-	C_PHONE STRING, 
-	C_ACCTBAL DOUBLE, 
-	C_MKTSEGMENT STRING, 
-	C_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.customer
+LIKE default.customer
 STORED AS PARQUET;
 
-CREATE TABLE tpch_parquet.orders (
-	O_ORDERKEY INT, 
-	O_CUSTKEY INT, 
-	O_ORDERSTATUS STRING, 
-	O_TOTALPRICE DOUBLE, 
-	O_ORDERDATE STRING, 
-	O_ORDERPRIORITY STRING, 
-	O_CLERK STRING, 
-	O_SHIPPRIORITY INT, 
-	O_COMMENT STRING
-) 
+CREATE TABLE tpch_parquet.orders 
+LIKE default.orders
 STORED AS PARQUET;
 
 -- copy into parquet
@@ -231,12 +170,21 @@ INSERT INTO tpch_parquet.customer	SELECT * FROM default.customer;
 INSERT INTO tpch_parquet.orders 	SELECT * FROM default.orders;
 
 -- create stats
-COMPUTE STATS lineitem;
-compute STATS orders;
-compute STATS customer;
-compute STATS part;
-compute STATS partsupp;
-compute STATS supplier;
-compute STATS nation;
-compute STATS region;
+COMPUTE STATS default.lineitem;
+COMPUTE STATS default.orders;
+COMPUTE STATS default.customer;
+COMPUTE STATS default.part;
+COMPUTE STATS default.partsupp;
+COMPUTE STATS default.supplier;
+COMPUTE STATS default.nation;
+COMPUTE STATS default.region;
+
+COMPUTE STATS tpch_parquet.lineitem;
+COMPUTE STATS tpch_parquet.orders;
+COMPUTE STATS tpch_parquet.customer;
+COMPUTE STATS tpch_parquet.part;
+COMPUTE STATS tpch_parquet.partsupp;
+COMPUTE STATS tpch_parquet.supplier;
+COMPUTE STATS tpch_parquet.nation;
+COMPUTE STATS tpch_parquet.region;
 
