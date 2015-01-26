@@ -1,35 +1,35 @@
--- the query
-insert overwrite table q19_discounted_revenue
 select
-  sum(l_extendedprice * (1 - l_discount) ) as revenue
+  round(sum(l_extendedprice * (1 - l_discount)), 5) as revenue
 from
-  lineitem l join part p
-  on 
-    p.p_partkey = l.l_partkey    
+  lineitem,
+  part
 where
-  (
-    p_brand = 'Brand#12'
-	and p_container REGEXP 'SM CASE||SM BOX||SM PACK||SM PKG'
-	and l_quantity >= 1 and l_quantity <= 11
-	and p_size >= 1 and p_size <= 5
-	and l_shipmode REGEXP 'AIR||AIR REG'
-	and l_shipinstruct = 'DELIVER IN PERSON'
-  ) 
-  or 
-  (
-    p_brand = 'Brand#23'
-	and p_container REGEXP 'MED BAG||MED BOX||MED PKG||MED PACK'
-	and l_quantity >= 10 and l_quantity <= 20
-	and p_size >= 1 and p_size <= 10
-	and l_shipmode REGEXP 'AIR||AIR REG'
-	and l_shipinstruct = 'DELIVER IN PERSON'
-  )
-  or
-  (
-	p_brand = 'Brand#34'
-	and p_container REGEXP 'LG CASE||LG BOX||LG PACK||LG PKG'
-	and l_quantity >= 20 and l_quantity <= 30
-	and p_size >= 1 and p_size <= 15
-	and l_shipmode REGEXP 'AIR||AIR REG'
-	and l_shipinstruct = 'DELIVER IN PERSON'
+  p_partkey = l_partkey
+  and (
+    (
+      p_brand = 'Brand#12'
+      and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+      and l_quantity >= 1 and l_quantity <= 11
+      and p_size between 1 and 5
+      and l_shipmode in ('AIR', 'AIR REG')
+      and l_shipinstruct = 'DELIVER IN PERSON'
+    )
+    or
+    (
+      p_brand = 'Brand#23'
+      and p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+      and l_quantity >= 10 and l_quantity <= 20
+      and p_size between 1 and 10
+      and l_shipmode in ('AIR', 'AIR REG')
+      and l_shipinstruct = 'DELIVER IN PERSON'
+    )
+    or
+    (
+      p_brand = 'Brand#34'
+      and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+      and l_quantity >= 20 and l_quantity <= 30
+      and p_size between 1 and 15
+      and l_shipmode in ('AIR', 'AIR REG')
+      and l_shipinstruct = 'DELIVER IN PERSON'
+    )
   )

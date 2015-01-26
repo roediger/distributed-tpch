@@ -15,7 +15,7 @@ options.drop_caches_cmd = 'for i in `seq 11 16`;do ssh scyper$i "/usr/local/bin/
 
 $configuration = {
   :impala => {
-		:cmd => ENV['IMPALA_CMD'] || 'impala-shell --database=tpch_parquet $ARGS',
+		:cmd => ENV['IMPALA_CMD'] || 'impala-shell -B --database=tpch_parquet $ARGS',
     :query_option => '-q',
 		:query_file_option => '-f',
     :success_regexp => /Fetched \d+ row\(s\) in/
@@ -114,6 +114,8 @@ File.open("benchmark.csv", 'w') do |f|
       end).median
     end
     
+    `mkdir ./log/#{benchmark}`
+    
     # Run each benchmark N times
     for n in 1..options[:n] do 
       
@@ -153,9 +155,13 @@ File.open("benchmark.csv", 'w') do |f|
         # and end time
         start = Time.now().to_f
         out = nil
-        log_cmd = " tee log/#{benchmark}-#{i}-#{n}.out"
+        log_cmd = " tee log/#{benchmark}-#{i}-#{n}.log"
         if $configuration[benchmark][:query_option]
-          out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")} #{log_cmd}` if File.exist? query_file
+          if benchmark == :impala
+            out = `#{cmd(benchmark, "-o log/impala/#{i}.txt #{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")} #{log_cmd}` if File.exist? query_file
+          else
+            out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_option]} \"#{File.read(query_file)}\"")} #{log_cmd}` if File.exist? query_file
+          end
         else
           out = `#{cmd(benchmark, "#{$configuration[benchmark][:query_file_option]} #{query_file}")} #{log_cmd}`
         end

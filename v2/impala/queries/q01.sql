@@ -1,11 +1,21 @@
--- the query
-INSERT OVERWRITE TABLE q1_pricing_summary_report 
-SELECT 
-  L_RETURNFLAG, L_LINESTATUS, SUM(L_QUANTITY), SUM(L_EXTENDEDPRICE), SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)), SUM(L_EXTENDEDPRICE*(1-L_DISCOUNT)*(1+L_TAX)), AVG(L_QUANTITY), AVG(L_EXTENDEDPRICE), AVG(L_DISCOUNT), cast(COUNT(1) as int)
-FROM 
-  lineitem 
-WHERE 
-  L_SHIPDATE<='1998-09-02' 
-GROUP BY L_RETURNFLAG, L_LINESTATUS 
-ORDER BY L_RETURNFLAG, L_LINESTATUS
-LIMIT 2147483647;
+select
+  l_returnflag,
+  l_linestatus,
+  sum(l_quantity) as sum_qty,
+  sum(l_extendedprice) as sum_base_price,
+  sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+  sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+  avg(l_quantity) as avg_qty,
+  avg(l_extendedprice) as avg_price,
+  avg(l_discount) as avg_disc,
+  count(*) as count_order
+from
+  lineitem
+where
+  l_shipdate <= '1998-09-02'
+group by
+  l_returnflag,
+  l_linestatus
+order by
+  l_returnflag,
+  l_linestatus
