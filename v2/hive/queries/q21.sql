@@ -1,34 +1,40 @@
--- the query
-insert overwrite table q21_tmp1
-select
-  l_orderkey, count(distinct l_suppkey), max(l_suppkey) as max_suppkey
-from
-  lineitem
-group by l_orderkey;
+set hive.optimize.correlation=true;
+set hive.optimize.ppd=true;
+set hive.optimize.index.filter=true;
 
-insert overwrite table q21_tmp2
-select
-  l_orderkey, count(distinct l_suppkey), max(l_suppkey) as max_suppkey
-from
-  lineitem
-where
-  l_receiptdate > l_commitdate
-group by l_orderkey;
+set hive.auto.convert.join = true;
+set hive.auto.convert.join.noconditionaltask = true;
+set hive.map.aggr=true;
+--set hive.exec.reducers.max=22;
+set mapred.reduce.tasks=120;
+set hive.auto.convert.join.noconditionaltask.size = 200000000;
+set hive.mapjoin.smalltable.filesize = 200000000;
+set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
 
-insert overwrite table q21_suppliers_who_kept_orders_waiting
+-- TPCH HIVE Q21 PART3
 select
   s_name, count(1) as numwait
 from
   (select s_name from
 (select s_name, t2.l_orderkey, l_suppkey, count_suppkey, max_suppkey 
- from q21_tmp2 t2 right outer join
+  from (select
+  l_orderkey, count(distinct l_suppkey) as count_suppkey, max(l_suppkey) as max_suppkey
+from
+  lineitem
+where
+  l_receiptdate > l_commitdate
+group by l_orderkey) t2 right outer join
       (select s_name, l_orderkey, l_suppkey from
          (select s_name, t1.l_orderkey, l_suppkey, count_suppkey, max_suppkey
           from
-            q21_tmp1 t1 join
+            (select
+  l_orderkey, count(distinct l_suppkey) as count_suppkey, max(l_suppkey) as max_suppkey
+from
+  lineitem
+group by l_orderkey) t1 join
             (select s_name, l_orderkey, l_suppkey
              from 
-               orders o join
+               ordersorc o join
                (select s_name, l_orderkey, l_suppkey
                 from
                   nation n join supplier s

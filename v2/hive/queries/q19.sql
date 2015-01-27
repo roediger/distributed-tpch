@@ -1,8 +1,20 @@
-set mapred.min.split.size=268435456;
-set hive.exec.reducers.bytes.per.reducer=1040000000;
 
--- the query
-insert overwrite table q19_discounted_revenue
+set hive.optimize.ppd=true;
+set hive.optimize.index.filter=true;
+
+set hive.optimize.correlation=true;
+set hive.auto.convert.join = true;
+set hive.auto.convert.join.noconditionaltask = true;
+set hive.map.aggr=true;
+--set hive.exec.reducers.max=22;
+set mapred.reduce.tasks=120;
+set hive.auto.convert.join.noconditionaltask.size = 200000000;
+set hive.mapjoin.smalltable.filesize = 200000000;
+set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
+
+
+-- TPCH HIVE Q19
+
 select
   sum(l_extendedprice * (1 - l_discount) ) as revenue
 from
@@ -36,3 +48,4 @@ where
 	and l_shipmode REGEXP 'AIR||AIR REG'
 	and l_shipinstruct = 'DELIVER IN PERSON'
   )
+;

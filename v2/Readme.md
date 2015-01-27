@@ -1,4 +1,7 @@
-TODO
+# Introduction
+# Benchmarking
+## Preparations
+## Initializing the Database
+## Running a Benchmark
+Run the following 
 
-- Check output results
-- Restart server (vector) between benchnmarks to clear caches

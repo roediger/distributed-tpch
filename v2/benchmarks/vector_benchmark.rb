@@ -41,12 +41,3 @@ class VectorBenchmark < Benchmark
     File.delete("log/vector/#{q}.out")
   end
 end
-
-
-class Array
-  def median
-    sorted = self.sort
-    half_len = (sorted.length / 2.0).ceil
-    (sorted[half_len-1] + sorted[-half_len]) / 2.0
-  end
-end

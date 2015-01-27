@@ -1,5 +1,20 @@
--- the query
-insert overwrite table q8_national_market_share 
+
+set hive.optimize.ppd=true;
+set hive.optimize.index.filter=true;
+set hive.optimize.ppd=true;
+set hive.optimize.index.filter=true;
+set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
+set hive.auto.convert.join = true;
+set hive.auto.convert.join.noconditionaltask = true;
+set hive.map.aggr=true;
+--set hive.exec.reducers.max=22;
+set mapred.reduce.tasks=120;
+ set hive.auto.convert.join.noconditionaltask.size = 200000000;
+ set hive.mapjoin.smalltable.filesize = 200000000;
+set hive.optimize.correlation=true;
+
+
+-- TPCH HIVE Q8
 select 
   o_year, sum(case when nation = 'BRAZIL' then volume else 0.0 end) / sum(volume) as mkt_share
 from 
@@ -16,7 +31,7 @@ select
              (select o_orderdate, l_partkey, l_discount, l_extendedprice, l_suppkey 
               from lineitem l join
                 (select o_orderdate, o_orderkey 
-                 from orders o join
+                 from ordersorc o join
                    (select c.c_custkey 
                     from customer c join
                       (select n1.n_nationkey 
@@ -31,5 +46,5 @@ select
         ) s1 on s1.s_nationkey = n2.n_nationkey
   ) all_nation
 group by o_year
-order by o_year
-LIMIT 2147483647;
+order by o_year;
+

@@ -1,17 +1,26 @@
--- the query
-insert overwrite table lineitem_tmp
-select 
-  l_partkey as t_partkey, 0.2 * avg(l_quantity) as t_avg_quantity
-from 
-  lineitem
-group by l_partkey;
+set hive.optimize.correlation=true;
+set hive.optimize.ppd=true;
+set hive.optimize.index.filter=true;
 
-insert overwrite table q17_small_quantity_order_revenue
+set hive.auto.convert.join = true;
+set hive.auto.convert.join.noconditionaltask = true;
+set hive.map.aggr=true;
+--set hive.exec.reducers.max=22;
+set mapred.reduce.tasks=120;
+set hive.auto.convert.join.noconditionaltask.size = 200000000;
+set hive.mapjoin.smalltable.filesize = 200000000;
+set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
+
+-- TPCH HIVE Q17 PART2
 select
   sum(l_extendedprice) / 7.0 as avg_yearly
 from
   (select l_quantity, l_extendedprice, t_avg_quantity from
-   lineitem_tmp t join
+   (select
+  l_partkey as t_partkey, 0.2 * avg(l_quantity) as t_avg_quantity
+from
+  lineitem
+group by l_partkey) t join
      (select
         l_quantity, l_partkey, l_extendedprice
       from

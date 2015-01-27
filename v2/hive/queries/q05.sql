@@ -1,12 +1,21 @@
-set mapred.min.split.size=536870912;
+set hive.optimize.ppd=true;
+set hive.optimize.index.filter=true;
+set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
+-- TPCH HIVE Q5
+set hive.auto.convert.join = true;
+set hive.auto.convert.join.noconditionaltask = true;
+set hive.map.aggr=true;
+--set hive.exec.reducers.max=22;
+set mapred.reduce.tasks=120;
+set hive.auto.convert.join.noconditionaltask.size = 200000000;
+set hive.mapjoin.smalltable.filesize = 200000000;
+set hive.optimize.correlation=true;
 
--- the query
-insert overwrite table q5_local_supplier_volume 
 select 
   n_name, sum(l_extendedprice * (1 - l_discount)) as revenue 
 from
   customer c join
-    ( select n_name, l_extendedprice, l_discount, s_nationkey, o_custkey from orders o join
+    ( select n_name, l_extendedprice, l_discount, s_nationkey, o_custkey from ordersorc o join
       ( select n_name, l_extendedprice, l_discount, l_orderkey, s_nationkey from lineitem l join
         ( select n_name, s_suppkey, s_nationkey from supplier s join
           ( select n_name, n_nationkey 
@@ -19,5 +28,5 @@ from
 ) o1 
 on c.c_nationkey = o1.s_nationkey and c.c_custkey = o1.o_custkey
 group by n_name 
-order by revenue desc
-LIMIT 2147483647;
+order by revenue desc;
+

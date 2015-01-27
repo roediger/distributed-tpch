@@ -82,3 +82,11 @@ class Benchmark
     return n == 1 ? t[0] : t
   end
 end
+
+class Array
+  def median
+    sorted = self.sort
+    half_len = (sorted.length / 2.0).ceil
+    (sorted[half_len-1] + sorted[-half_len]) / 2.0
+  end
+end
