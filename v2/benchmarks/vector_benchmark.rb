@@ -4,32 +4,24 @@ class VectorBenchmark < Benchmark
   
   def setup()
     super
-    
     `chmod -R 777 log/vector 1>/dev/null 2>/dev/null`
-    
-    File.open('no_query.sql', 'w') {|f| f.write(';\g') }
-    
-    @startup_time = (self.benchmark 3 do 
-      self.cmd "sudo -u actian bash -c \"source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/sql dbtest < no_query.sql\""
-    end).map{|o,t| t}.median
-    
-    `rm no_query.sql`
   end
   
   def perform_run(q)
     return nil if not File.exist? self.query_file(q)
     
-    t = (self.benchmark 1 do
-      out = self.cmd "sudo -u actian bash -c \"source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/sql dbtest < #{self.query_file(q)}\" > log/vector/#{q}.out"
-    end)[1] - @startup_time
+    self.cmd "sudo -u actian bash -c \"source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/sql dbtest < #{self.query_file(q)}\" > log/vector/#{q}.out"
     
     # If vector created the output file and it contains the success string, we return the time
     # otherwise nil to indicate an errorneus execution
     if File.exist?("log/vector/#{q}.out") && File.read("log/vector/#{q}.out").match(/Your SQL statement\(s\) have been committed/)
-      return t
-    else
-      return nil
+      out = `grep "Query finished with" /opt/Actian/AnalyticsPlatformAH/ingres/files/vectorwise.log | grep -v "0\\.0" | tail -n 1`
+      match = out.match(/finished with \d+ result(?:s){0,1} \(in (\d+(?:\.\d+){0,1})/)
+      if match
+        return match.captures[0].to_f
+      end
     end
+    return nil
   end
   
   def after_run(q)

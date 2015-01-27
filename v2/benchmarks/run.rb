@@ -7,6 +7,7 @@ require 'ostruct'
 
 require_relative 'impala_benchmark'
 require_relative 'vector_benchmark'
+require_relative 'hive_benchmark'
 
 ########################
 # Parse all parameters #
