@@ -14,7 +14,7 @@ set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
 select 
   c_name,c_custkey,o_orderkey,o_orderdate,o_totalprice,sum(l_quantity)
 from 
-  customer c join ordersorc o 
+  customer c join orders o 
   on 
     c.c_custkey = o.o_custkey
   join (

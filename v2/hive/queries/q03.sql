@@ -10,10 +10,11 @@ set mapred.reduce.tasks=120;
 set hive.auto.convert.join.noconditionaltask.size = 200000000;
 set hive.mapjoin.smalltable.filesize = 200000000;
 set hive.optimize.correlation=true;
+
 select 
   l_orderkey, sum(l_extendedprice*(1-l_discount)) as revenue, o_orderdate, o_shippriority 
 from 
-  customer c join ordersorc o 
+  customer c join orders o 
     on c.c_mktsegment = 'BUILDING' and c.c_custkey = o.o_custkey 
   join lineitem l 
     on l.l_orderkey = o.o_orderkey

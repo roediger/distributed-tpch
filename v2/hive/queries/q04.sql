@@ -13,7 +13,7 @@ set hive.mapjoin.smalltable.filesize = 200000000;
 
 select o_orderpriority, count(1) as order_count 
 from 
-  ordersorc o join (
+  orders o join (
   select
   DISTINCT l_orderkey as o_orderkey
   from

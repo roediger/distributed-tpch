@@ -54,7 +54,7 @@ from
       (select
   o_custkey
 from
-  ordersorc
+  orders
 group by
   o_custkey) ot 
       right outer join q22_customer_tmp ct 

@@ -15,7 +15,7 @@ select
   n_name, sum(l_extendedprice * (1 - l_discount)) as revenue 
 from
   customer c join
-    ( select n_name, l_extendedprice, l_discount, s_nationkey, o_custkey from ordersorc o join
+    ( select n_name, l_extendedprice, l_discount, s_nationkey, o_custkey from orders o join
       ( select n_name, l_extendedprice, l_discount, l_orderkey, s_nationkey from lineitem l join
         ( select n_name, s_suppkey, s_nationkey from supplier s join
           ( select n_name, n_nationkey 

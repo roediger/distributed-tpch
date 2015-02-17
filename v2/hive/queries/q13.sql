@@ -20,7 +20,7 @@ from
   (select 
      c_custkey, count(o_orderkey) as c_count
    from 
-     customer c left outer join ordersorc o 
+     customer c left outer join orders o 
      on 
        c.c_custkey = o.o_custkey and not o.o_comment like '%special%requests%'
    group by c_custkey

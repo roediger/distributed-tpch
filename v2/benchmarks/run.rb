@@ -87,12 +87,13 @@ File.open("benchmark.csv", 'w') do |f|
         end
         
         t = benchmark.run q
+        t = t.is_a?(Array) ? t : [t]
         
         # Write the result to the file and a green or red dot to
         # the console
         if t
           print ".".green
-          f.write "#{t}"
+          f.write "#{t.join(',')}"
         else
           print ".".red
         end

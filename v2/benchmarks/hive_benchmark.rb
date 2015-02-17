@@ -9,7 +9,7 @@ class HiveBenchmark < Benchmark
       self.cmd "sudo -u hive hive --database tpch_orc -f no_query.sql"
     end).map{|o,t| t}.median)
     
-    print "Startup Time Q #{q}: #{@startup_time}s"
+    #print "Startup Time Q #{q}: #{@startup_time}s"
     
     `rm no_query.sql`
   end
@@ -22,9 +22,9 @@ class HiveBenchmark < Benchmark
       out = self.cmd "sudo -u hive hive --database tpch_orc -f #{self.query_file(q)}"
     end)
     
-    match = out.match(/OK\nTime taken: (\d+(?:\.\d+){0,1}) seconds$/)
-    if match
-      return t - @startup_time
+    if out.match(/Failed/).nil?
+      t2 = out.to_enum(:scan, /Time taken: (\d+(?:\.\d+))\s*s/i).map { Regexp.last_match.captures[0].to_f }.inject(0, :+)
+      return [t, t - @startup_time, t2]
     end
     return nil
   end

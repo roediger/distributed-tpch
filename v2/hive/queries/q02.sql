@@ -1,4 +1,3 @@
-
 set hive.optimize.correlation=true;
 set hive.optimize.ppd=true;
 set hive.optimize.index.filter=true;
@@ -8,13 +7,11 @@ set hive.auto.convert.join.noconditionaltask = true;
 set hive.map.aggr=true;
 --set hive.exec.reducers.max=22;
 set mapred.reduce.tasks=120;
- set hive.auto.convert.join.noconditionaltask.size = 200000000;
- set hive.mapjoin.smalltable.filesize = 200000000;
+set hive.auto.convert.join.noconditionaltask.size = 200000000;
+set hive.mapjoin.smalltable.filesize = 200000000;
 set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
 
-
 DROP TABLE q2_minimum_cost_supplier_tmp1;
-
 create table q2_minimum_cost_supplier_tmp1 (s_acctbal double, s_name string, n_name string, p_partkey int, ps_supplycost double, p_mfgr string, s_address string, s_phone string, s_comment string) stored as orc tblproperties ("orc.compress"="NONE");
 
 insert overwrite table q2_minimum_cost_supplier_tmp1

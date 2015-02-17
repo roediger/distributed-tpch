@@ -48,7 +48,9 @@ class Benchmark
   end
   
   # Override Point: This method is executed and should actually
-  # perform a benchmark run for query q
+  # perform a benchmark run for query q.
+  # This method should return one or more times, either as scalar
+  # or array
   def perform_run(q)
   end
   

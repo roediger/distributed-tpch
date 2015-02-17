@@ -34,7 +34,7 @@ from
 group by l_orderkey) t1 join
             (select s_name, l_orderkey, l_suppkey
              from 
-               ordersorc o join
+               orders o join
                (select s_name, l_orderkey, l_suppkey
                 from
                   nation n join supplier s

@@ -29,7 +29,7 @@ end
 end
   ) as low_line_count
 from
-  ordersorc o join lineitem l 
+  orders o join lineitem l 
   on 
     o.o_orderkey = l.l_orderkey and l.l_commitdate < l.l_receiptdate
 and l.l_shipdate < l.l_commitdate and l.l_receiptdate >= '1994-01-01' 

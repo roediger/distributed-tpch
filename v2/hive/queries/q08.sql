@@ -31,7 +31,7 @@ select
              (select o_orderdate, l_partkey, l_discount, l_extendedprice, l_suppkey 
               from lineitem l join
                 (select o_orderdate, o_orderkey 
-                 from ordersorc o join
+                 from orders o join
                    (select c.c_custkey 
                     from customer c join
                       (select n1.n_nationkey 

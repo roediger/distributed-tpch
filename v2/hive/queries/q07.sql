@@ -48,7 +48,7 @@ from
            (select l_shipdate, l_extendedprice, l_discount, l_suppkey, c_nationkey 
             from customer c join
               (select l_shipdate, l_extendedprice, l_discount, l_suppkey, o_custkey 
-               from ordersorc o join lineitem l 
+               from orders o join lineitem l 
                on 
                  o.o_orderkey = l.l_orderkey and l.l_shipdate >= '1995-01-01' 
                  and l.l_shipdate <= '1996-12-31'

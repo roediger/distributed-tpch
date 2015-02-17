@@ -20,7 +20,7 @@ select
   n_name as nation, year(o_orderdate) as o_year, 
   l_extendedprice * (1 - l_discount) -  ps_supplycost * l_quantity as amount
     from
-      ordersorc o join
+      orders o join
       (select l_extendedprice, l_discount, l_quantity, l_orderkey, n_name, ps_supplycost 
        from part p join
          (select l_extendedprice, l_discount, l_quantity, l_partkey, l_orderkey, 
