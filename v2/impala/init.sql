@@ -37,7 +37,7 @@ CREATE EXTERNAL TABLE default.lineitem (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/lineitem';
+LOCATION '/tpch/100/lineitem';
 
 CREATE EXTERNAL TABLE default.part (
 	P_PARTKEY INT, 
@@ -52,7 +52,7 @@ CREATE EXTERNAL TABLE default.part (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/part';
+LOCATION '/tpch/100/part';
 
 CREATE EXTERNAL TABLE default.supplier (
 	S_SUPPKEY INT, 
@@ -65,7 +65,7 @@ CREATE EXTERNAL TABLE default.supplier (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/supplier';
+LOCATION '/tpch/100/supplier';
 
 CREATE EXTERNAL TABLE default.partsupp (
 	PS_PARTKEY INT, 
@@ -76,7 +76,7 @@ CREATE EXTERNAL TABLE default.partsupp (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION'/tpch/300/partsupp';
+LOCATION'/tpch/100/partsupp';
 
 CREATE EXTERNAL TABLE default.nation (
 	N_NATIONKEY INT, 
@@ -86,7 +86,7 @@ CREATE EXTERNAL TABLE default.nation (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/nation';
+LOCATION '/tpch/100/nation';
 
 CREATE EXTERNAL TABLE default.region (
 	R_REGIONKEY INT, 
@@ -94,7 +94,7 @@ CREATE EXTERNAL TABLE default.region (
 	R_COMMENT STRING) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/region';
+LOCATION '/tpch/100/region';
 
 CREATE EXTERNAL TABLE default.customer (
 	C_CUSTKEY INT, 
@@ -108,7 +108,7 @@ CREATE EXTERNAL TABLE default.customer (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/customer';
+LOCATION '/tpch/100/customer';
 
 CREATE EXTERNAL TABLE default.orders (
 	O_ORDERKEY INT, 
@@ -123,7 +123,7 @@ CREATE EXTERNAL TABLE default.orders (
 ) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '|' 
 STORED AS TEXTFILE 
-LOCATION '/tpch/300/orders';
+LOCATION '/tpch/100/orders';
 
 CREATE TABLE tpch_parquet.lineitem
 LIKE default.lineitem 
@@ -166,20 +166,3 @@ INSERT INTO tpch_parquet.region 	SELECT * FROM default.region;
 INSERT INTO tpch_parquet.customer	SELECT * FROM default.customer;
 INSERT INTO tpch_parquet.orders 	SELECT * FROM default.orders;
 
-COMPUTE STATS default.lineitem;
-COMPUTE STATS default.orders;
-COMPUTE STATS default.customer;
-COMPUTE STATS default.part;
-COMPUTE STATS default.partsupp;
-COMPUTE STATS default.supplier;
-COMPUTE STATS default.nation;
-COMPUTE STATS default.region;
-
-COMPUTE STATS tpch_parquet.lineitem;
-COMPUTE STATS tpch_parquet.orders;
-COMPUTE STATS tpch_parquet.customer;
-COMPUTE STATS tpch_parquet.part;
-COMPUTE STATS tpch_parquet.partsupp;
-COMPUTE STATS tpch_parquet.supplier;
-COMPUTE STATS tpch_parquet.nation;
-COMPUTE STATS tpch_parquet.region;
