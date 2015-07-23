@@ -29,4 +29,4 @@ where
       and n_name = 'GERMANY'
   )
 order by
-  value desc
+  value desc;

@@ -18,4 +18,4 @@ where
 group by
   o_orderpriority
 order by
-  o_orderpriority
+  o_orderpriority;
