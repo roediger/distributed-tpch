@@ -10,14 +10,14 @@ DROP TABLE IF EXISTS tpch_orc.customer;
 DROP TABLE IF EXISTS tpch_orc.orders;
 
 -- create orc tables
-CREATE TABLE tpch_orc.lineitem  STORED AS ORC AS SELECT * FROM default.lineitem;
-CREATE TABLE tpch_orc.part 		STORED AS ORC AS SELECT * FROM default.part;
-CREATE TABLE tpch_orc.supplier 	STORED AS ORC AS SELECT * FROM default.supplier;
-CREATE TABLE tpch_orc.partsupp 	STORED AS ORC AS SELECT * FROM default.partsupp;
-CREATE TABLE tpch_orc.nation 	STORED AS ORC AS SELECT * FROM default.nation;
-CREATE TABLE tpch_orc.region    STORED AS ORC AS SELECT * FROM default.region;
-CREATE TABLE tpch_orc.customer	STORED AS ORC AS SELECT * FROM default.customer;
-CREATE TABLE tpch_orc.orders 	STORED AS ORC AS SELECT * FROM default.orders;
+CREATE TABLE tpch_orc.lineitem STORED AS ORC AS SELECT * FROM tpch_csv.lineitem;
+CREATE TABLE tpch_orc.part     STORED AS ORC AS SELECT * FROM tpch_csv.part;
+CREATE TABLE tpch_orc.supplier STORED AS ORC AS SELECT * FROM tpch_csv.supplier;
+CREATE TABLE tpch_orc.partsupp STORED AS ORC AS SELECT * FROM tpch_csv.partsupp;
+CREATE TABLE tpch_orc.nation   STORED AS ORC AS SELECT * FROM tpch_csv.nation;
+CREATE TABLE tpch_orc.region   STORED AS ORC AS SELECT * FROM tpch_csv.region;
+CREATE TABLE tpch_orc.customer STORED AS ORC AS SELECT * FROM tpch_csv.customer;
+CREATE TABLE tpch_orc.orders   STORED AS ORC AS SELECT * FROM tpch_csv.orders;
 
 /*
 USE tpch_orc;
