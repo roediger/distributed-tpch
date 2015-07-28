@@ -66,16 +66,17 @@ File.open("benchmark.csv", 'w') do |f|
     benchmark = benchmark_clazz.new options
     benchmark.setup
     
-    # Run each benchmark N times
-    for n in 1..options[:n] do 
+    # Run each query
+    for q in options[:queries] do
+
+    # Write current run to console and file
+    n_str = options[:n] > 1 ? " (Q#{q})" : ""
+    print "#{benchmark.name}#{n_str}\t"
+    f.write "#{benchmark.name}#{n_str}\t"
       
-      # Write current run to console and file
-      n_str = options[:n] > 1 ? " (#{n})" : ""
-      print "#{benchmark.name}#{n_str}\t"
-      f.write "#{benchmark.name}#{n_str},"
-      
-      # Run each query
-      for q in options[:queries] do
+
+      # Run each benchmark N times
+      for n in 1..options[:n] do
         `echo "Running Benchmark #{benchmark.name}, Query #{q}, Run #{n}" >> benchmark.log`
         
         benchmark.prepare q
@@ -93,13 +94,13 @@ File.open("benchmark.csv", 'w') do |f|
         # the console
         if t
           print ".".green
-          f.write "#{t.join(',')}"
+          f.write(t.join("\t"))
         else
           print ".".red
         end
     
-        if q != options.queries.last
-          f.write ','
+        if n != options[:n]
+          f.write "\t"
         else
           f.write "\n"
           print "\n"
