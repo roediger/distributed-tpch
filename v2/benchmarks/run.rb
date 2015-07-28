@@ -16,8 +16,8 @@ options = OpenStruct.new
 options.benchmarks = Benchmark.subclasses
 options.queries = 1..22
 options.n = 1
-options.drop_caches = true
-options.restart = true
+options.drop_caches = false
+options.restart = false
 options.drop_caches_cmd = 'for i in `seq 11 16`;do ssh scyper$i "/usr/local/bin/flush_fs_caches"; done'
 
 OptionParser.new do |opts|
