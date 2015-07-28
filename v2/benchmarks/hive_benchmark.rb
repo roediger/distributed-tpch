@@ -6,7 +6,7 @@ class HiveBenchmark < Benchmark
     File.open('no_query.sql', 'w') {|f| f.write(';') }
     
     @startup_time = ((self.benchmark 3 do 
-      self.cmd "sudo -u hive hive --database tpch_orc -f no_query.sql" #--database tpch_orc
+      self.cmd "hive --database tpch_orc -f no_query.sql" #--database tpch_orc
     end).map{|o,t| t}.median)
     
     #print "Startup Time Q #{q}: #{@startup_time}s"
@@ -19,7 +19,7 @@ class HiveBenchmark < Benchmark
     
     out = nil
     o, t = (self.benchmark 1 do 
-      out = self.cmd "sudo -u hive hive --database tpch_orc -f #{self.query_file(q)}" #--database tpch_orc
+      out = self.cmd "hive --database tpch_orc -f #{self.query_file(q)}" #--database tpch_orc
     end)
     
     if out.match(/Failed/).nil?
