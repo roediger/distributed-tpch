@@ -10,45 +10,45 @@ DROP TABLE IF EXISTS tpch_parquet.customer;
 DROP TABLE IF EXISTS tpch_parquet.orders;
 
 CREATE TABLE tpch_parquet.lineitem
-LIKE default.lineitem 
+LIKE tpch_csv.lineitem 
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.part
-LIKE default.part
+LIKE tpch_csv.part
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.supplier
-LIKE default.supplier
+LIKE tpch_csv.supplier
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.partsupp
-LIKE default.partsupp
+LIKE tpch_csv.partsupp
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.nation
-LIKE default.nation
+LIKE tpch_csv.nation
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.region
-LIKE default.region
+LIKE tpch_csv.region
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.customer
-LIKE default.customer
+LIKE tpch_csv.customer
 STORED AS PARQUET;
 
 CREATE TABLE tpch_parquet.orders 
-LIKE default.orders
+LIKE tpch_csv.orders
 STORED AS PARQUET;
 
-INSERT INTO tpch_parquet.lineitem 	SELECT * FROM default.lineitem;
-INSERT INTO tpch_parquet.part 		SELECT * FROM default.part;
-INSERT INTO tpch_parquet.supplier 	SELECT * FROM default.supplier;
-INSERT INTO tpch_parquet.partsupp 	SELECT * FROM default.partsupp;
-INSERT INTO tpch_parquet.nation 	SELECT * FROM default.nation;
-INSERT INTO tpch_parquet.region 	SELECT * FROM default.region;
-INSERT INTO tpch_parquet.customer 	SELECT * FROM default.customer;
-INSERT INTO tpch_parquet.orders 	SELECT * FROM default.orders;
+INSERT INTO tpch_parquet.lineitem SELECT * FROM tpch_csv.lineitem;
+INSERT INTO tpch_parquet.part     SELECT * FROM tpch_csv.part;
+INSERT INTO tpch_parquet.supplier SELECT * FROM tpch_csv.supplier;
+INSERT INTO tpch_parquet.partsupp SELECT * FROM tpch_csv.partsupp;
+INSERT INTO tpch_parquet.nation   SELECT * FROM tpch_csv.nation;
+INSERT INTO tpch_parquet.region   SELECT * FROM tpch_csv.region;
+INSERT INTO tpch_parquet.customer SELECT * FROM tpch_csv.customer;
+INSERT INTO tpch_parquet.orders   SELECT * FROM tpch_csv.orders;
 
 COMPUTE STATS tpch_parquet.lineitem;
 COMPUTE STATS tpch_parquet.orders;
