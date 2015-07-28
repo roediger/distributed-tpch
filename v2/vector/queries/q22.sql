@@ -35,3 +35,4 @@ group by
 		cntrycode
 order by
 		cntrycode;\g
+select execution_time from iivwprof_query;\g

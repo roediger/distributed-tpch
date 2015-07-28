@@ -28,3 +28,4 @@ where
 	)
 order by
 	s_suppkey;\g
+select execution_time from iivwprof_query;\g

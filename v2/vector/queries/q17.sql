@@ -15,3 +15,4 @@ where
 				where
 						l_partkey = p_partkey
 		);\g
+select execution_time from iivwprof_query;\g

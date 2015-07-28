@@ -37,4 +37,4 @@ order by
 		supp_nation,
 		cust_nation,
 		l_year;\g
-
+select execution_time from iivwprof_query;\g

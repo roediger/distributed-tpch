@@ -22,3 +22,4 @@ group by
 		n_name
 order by
 		revenue desc;\g
+select execution_time from iivwprof_query;\g

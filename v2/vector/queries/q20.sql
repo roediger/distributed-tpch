@@ -35,3 +35,4 @@ where
 		and n_name = 'CANADA'
 order by
 		s_name;\g
+select execution_time from iivwprof_query;\g

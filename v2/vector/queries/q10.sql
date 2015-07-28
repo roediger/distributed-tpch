@@ -29,3 +29,4 @@ group by
 		c_comment
 order by
 		revenue desc;\g
+select execution_time from iivwprof_query;\g

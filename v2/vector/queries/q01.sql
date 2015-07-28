@@ -19,3 +19,4 @@ group by
 order by
 		l_returnflag,
 		l_linestatus;\g
+select execution_time from iivwprof_query;\g

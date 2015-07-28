@@ -26,3 +26,4 @@ group by
 		l_shipmode
 order by
 		l_shipmode;\g
+select execution_time from iivwprof_query;\g

@@ -30,3 +30,4 @@ group by
 order by
 		o_totalprice desc,
 		o_orderdate;\g
+select execution_time from iivwprof_query;\g

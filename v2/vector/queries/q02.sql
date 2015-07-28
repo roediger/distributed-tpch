@@ -41,3 +41,4 @@ order by
 		n_name,
 		s_name,
 		p_partkey;\g
+select execution_time from iivwprof_query;\g

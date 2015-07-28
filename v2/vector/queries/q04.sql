@@ -19,3 +19,4 @@ group by
 		o_orderpriority
 order by
 		o_orderpriority;\g
+select execution_time from iivwprof_query;\g

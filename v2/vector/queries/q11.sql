@@ -25,3 +25,4 @@ group by
 				)
 order by
 		"value" desc;\g
+select execution_time from iivwprof_query;\g

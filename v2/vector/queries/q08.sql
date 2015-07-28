@@ -35,3 +35,4 @@ group by
 		o_year
 order by
 		o_year;\g
+select execution_time from iivwprof_query;\g

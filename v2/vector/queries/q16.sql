@@ -28,3 +28,4 @@ order by
 		p_brand,
 		p_type,
 		p_size;\g
+select execution_time from iivwprof_query;\g
