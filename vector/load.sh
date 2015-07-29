@@ -1,10 +1,9 @@
-source ~actian/.ingAHsh
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table region tpch /tpch/100/region.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table nation tpch /tpch/100/nation.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table part tpch /tpch/100/part.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table supplier tpch /tpch/100/supplier.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table partsupp tpch /tpch/100/partsupp.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table customer tpch /tpch/100/customer.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table orders tpch /tpch/100/orders.tbl"
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table lineitem tpch /tpch/100/lineitem.tbl"
 
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table region dbtest /space/tpch/100/region.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table nation dbtest /space/tpch/100/nation.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table part dbtest /space/tpch/100/part.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table supplier dbtest /space/tpch/100/supplier.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table partsupp dbtest /space/tpch/100/partsupp.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table customer dbtest /space/tpch/100/customer.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table orders dbtest /space/tpch/100/orders.tbl
-/opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table lineitem dbtest /space/tpch/100/lineitem.tbl
