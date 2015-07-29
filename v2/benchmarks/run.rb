@@ -1,13 +1,13 @@
 #!/usr/bin/ruby
-
 require 'optparse'
 require 'date'
 require 'colorize'
 require 'ostruct'
 
-require_relative 'impala_benchmark'
-require_relative 'vector_benchmark'
 require_relative 'hive_benchmark'
+require_relative 'impala_benchmark'
+require_relative 'memsql_benchmark'
+require_relative 'vector_benchmark'
 
 ########################
 # Parse all parameters #
