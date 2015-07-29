@@ -1,0 +1,2 @@
+// major change: use rewritten query because original query not supported
+sqlContext.sql("select o_orderpriority, count(1) as order_count from orders o join (select DISTINCT l_orderkey as o_orderkey from lineitem where l_commitdate < l_receiptdate) t on o.o_orderkey = t.o_orderkey and o.o_orderdate >= '1993-07-01' and o.o_orderdate < '1993-10-01' group by o_orderpriority order by o_orderpriority").show()
