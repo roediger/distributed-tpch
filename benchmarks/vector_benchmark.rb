@@ -20,11 +20,18 @@ class VectorBenchmark < Benchmark
 
     # If vector created the output file and it contains the success string, we return the time
     # otherwise nil to indicate an errorneus execution
-    if File.exist?("log/vector/#{q}.out") && File.read("log/vector/#{q}.out").match(/Your SQL statement\(s\) have been committed/)
-      out = `grep "0 00:00:" log/#{self.name}/#{q}.out | tail -n 1`
-      match = out.match(/0 00\:00\:(\d+(?:\.\d+){0,1})/)
-      if match
-        return match.captures[0].to_f
+    if File.exist?("log/#{self.name}/#{q}.out")
+      file = File.read("log/#{self.name}/#{q}.out")
+      if !file.match(/Your SQL statement\(s\) have been committed/)
+        return nil
+      end
+      io = file.match(/async_io (\d+)/)
+      if io and io.captures[0].to_i > 0
+        puts "Warning: #{io.captures[0].to_i} async I/O requests".red
+      end
+      runtime = file.match(/0 00\:00\:(\d+(?:\.\d+){0,1})/)
+      if runtime
+        return runtime.captures[0].to_f
       end
     end
     return nil
@@ -35,7 +42,7 @@ class VectorBenchmark < Benchmark
     s = File.read("log/#{self.name}/#{q}.out")
 
     # Remove rows with execution time
-    s = s.lines[0..(s.lines.count-14)].join
+    s = s.lines[0..(s.lines.count-28)].join
 
     # Remove lines before the first relevant and after the last relevant line. After this step, the
     # first and last line are only consisting only of +--+...

@@ -36,3 +36,4 @@ group by
 order by
 		cntrycode;\g
 select execution_time from iivwprof_query;\g
+select concat('async_io ', SUM(async_io)) from iivwprof;\g

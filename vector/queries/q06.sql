@@ -8,3 +8,4 @@ where
 		and l_discount between 0.06 - 0.01 and 0.06 + 0.01
 		and l_quantity < 24;\g
 select execution_time from iivwprof_query;\g
+select concat('async_io ', SUM(async_io)) from iivwprof;\g

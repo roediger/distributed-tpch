@@ -20,3 +20,4 @@ order by
 		l_returnflag,
 		l_linestatus;\g
 select execution_time from iivwprof_query;\g
+select concat('async_io ', SUM(async_io)) from iivwprof;\g
