@@ -21,9 +21,11 @@ options.verify = true
 options.profile = false
 options.drop_caches = false
 options.restart = false
+options.infiniband = true
 options.drop_caches_cmd = "for i in `seq 11 16`; do ssh scyper$i \"/usr/local/bin/flush_fs_caches\"; done"
 options.verify_dir = "~/repositories/verify"
-options.statistics_cmd = "for i in `seq 11 16`; do ssh scyper$i \"awk '{print \\$3, \\$7}' /sys/class/block/sda/stat /sys/class/block/sdb/stat /sys/class/block/sdc/stat | cat - /sys/class/infiniband/mlx4_0/ports/1/counters/port_rcv_packets /sys/class/infiniband/mlx4_0/ports/1/counters/port_xmit_packets /sys/class/infiniband/mlx4_0/ports/1/counters/port_rcv_data /sys/class/infiniband/mlx4_0/ports/1/counters/port_xmit_data | xargs\"; done"
+options.statistics_cmd_ib = "for i in `seq 11 16`; do ssh scyper$i \"awk '{print \\$3, \\$7}' /sys/class/block/sda/stat /sys/class/block/sdb/stat /sys/class/block/sdc/stat | cat - /sys/class/infiniband/mlx4_0/ports/1/counters/port_rcv_packets /sys/class/infiniband/mlx4_0/ports/1/counters/port_xmit_packets /sys/class/infiniband/mlx4_0/ports/1/counters/port_rcv_data /sys/class/infiniband/mlx4_0/ports/1/counters/port_xmit_data | xargs\"; done"
+options.statistics_cmd_gbe = "for i in `seq 11 16`; do ssh scyper$i \"awk '{print \\$3, \\$7}' /sys/class/block/sda/stat /sys/class/block/sdb/stat /sys/class/block/sdc/stat | cat - /sys/class/net/em1/statistics/rx_packets /sys/class/net/em1/statistics/tx_packets /sys/class/net/em1/statistics/rx_bytes /sys/class/net/em1/statistics/tx_bytes | xargs\"; done"
 
 OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} [options]"
@@ -51,6 +53,9 @@ OptionParser.new do |opts|
   end
   opts.on("-r", "--restart RESTART", [:true, :false], "Whether the system should be restarted between runs (default " + options.restart.to_s + ")") do |r|
     options.restart = (r == :true)
+  end
+  opts.on("-i", "--infiniband", [:true, :false], "Whether to use Infiniband (default " + options.infiniband.to_s + ")") do |i|
+    options.infiniband = (i == :true)
   end
 
   opts.on_tail("-h", "--help", "Show this message") do
@@ -109,7 +114,11 @@ File.open("run.csv", 'w') do |f|
     statistics_before = []
     if (options.profile)
       puts "gathering I/O stats..."
-      statistics_before = gather_statistics options.statistics_cmd
+      if (options.infiniband) then
+        statistics_before = gather_statistics options.statistics_cmd_ib
+      else
+        statistics_before = gather_statistics options.statistics_cmd_gbe
+      end
     end
 
     # Run each query
@@ -169,15 +178,26 @@ File.open("run.csv", 'w') do |f|
     if options.profile
       puts "gathering I/O stats..."
       statistics = []
-      (gather_statistics options.statistics_cmd).each_with_index do |value, index|
-        statistics[index] = value - statistics_before[index]
+      if (options.infiniband) then
+        (gather_statistics options.statistics_cmd_ib).each_with_index do |value, index|
+          statistics[index] = value - statistics_before[index]
+        end
+      else
+        (gather_statistics options.statistics_cmd_gbe).each_with_index do |value, index|
+          statistics[index] = value - statistics_before[index]
+        end
       end
       puts "disk read\t#{((statistics[0]+statistics[2]+statistics[4]).to_f/1000/1000).round(2)} GB"
       puts "disk write\t#{((statistics[1]+statistics[3]+statistics[5].to_f)/1000/1000).round(2)} GB"
       puts "packets recv\t#{(statistics[6].to_f/1000/1000).round(2)} million"
       puts "packets sent\t#{(statistics[7].to_f/1000/1000).round(2)} million"
-      puts "data recv\t#{(statistics[8]*4.0/1000/1000/1000).round(2)} GB"
-      puts "data sent\t#{(statistics[9]*4.0/1000/1000/1000).round(2)} GB"
+      if (options.infiniband) then
+        puts "data recv\t#{(statistics[8]*4.0/1000/1000/1000).round(2)} GB"
+        puts "data sent\t#{(statistics[9]*4.0/1000/1000/1000).round(2)} GB"
+      else
+        puts "data recv\t#{(statistics[8]/1000/1000/1000).round(2)} GB"
+        puts "data sent\t#{(statistics[9]/1000/1000/1000).round(2)} GB"
+      end
     end
   end
 end

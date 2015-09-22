@@ -1,4 +1,4 @@
-drop view revenue;
+drop view if exists revenue;
 create view revenue as (
         select
                 l_suppkey as supplier_no,

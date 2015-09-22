@@ -7,3 +7,4 @@ sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH
 sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table orders tpch /tpch/100/orders.tbl"
 sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/vwload -I -m --table lineitem tpch /tpch/100/lineitem.tbl"
 
+sudo -u actian bash -c "source ~actian/.ingAHsh; /opt/Actian/AnalyticsPlatformAH/ingres/bin/optimizedb -zfq tpch"
